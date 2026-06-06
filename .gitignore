@@ -5,3 +5,4 @@ __pycache__/
 
 chrome-profile-shot/
 *.log
+*.env
