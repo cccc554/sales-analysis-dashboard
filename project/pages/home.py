@@ -343,6 +343,32 @@ def _nav_button(label: str, page_key: str, key: str):
         st.rerun()
 
 
+def _go_to_dataset_center():
+    st.session_state.current_page = "dataset_center"
+    st.session_state.page_index = PAGE_KEYS.index("dataset_center")
+    try:
+        st.query_params["page"] = "dataset_center"
+    except Exception:
+        try:
+            st.experimental_set_query_params(page="dataset_center")
+        except Exception:
+            pass
+
+    if hasattr(st, "rerun"):
+        st.rerun()
+    else:
+        st.experimental_rerun()
+
+
+def _render_missing_dataset_prompt():
+    prompt_col, button_col = st.columns([0.74, 0.26])
+    with prompt_col:
+        st.warning("⚠️ 当前首页没有数据，请先上传数据。")
+    with button_col:
+        if st.button("前往数据中心上传", key="home_go_dataset_center", use_container_width=True):
+            _go_to_dataset_center()
+
+
 def _pill_list(items):
     html = "".join(f'<span class="home-pill">{escape(item)}</span>' for item in items)
     st.markdown(html, unsafe_allow_html=True)
@@ -631,7 +657,7 @@ def render():
 
     kpis = _dataset_kpis()
     if not kpis["loaded"]:
-        st.info(t("home_dataset_missing_hint"))
+        _render_missing_dataset_prompt()
 
     values = [
         _format_money(kpis["revenue"]) if kpis["revenue"] is not None else t("not_available"),
