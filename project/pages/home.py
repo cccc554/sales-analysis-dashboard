@@ -343,16 +343,6 @@ def _nav_button(label: str, page_key: str, key: str):
         st.rerun()
 
 
-def _set_page_query_param(page_key: str):
-    try:
-        if hasattr(st, "query_params"):
-            st.query_params["page"] = page_key
-        elif hasattr(st, "experimental_set_query_params"):
-            st.experimental_set_query_params(page=page_key)
-    except Exception:
-        pass
-
-
 def _safe_rerun():
     rerun = getattr(st, "rerun", None)
     if rerun is None:
@@ -363,7 +353,6 @@ def _safe_rerun():
 
 def _go_to_dataset_center():
     _set_current_page("dataset_center")
-    _set_page_query_param("dataset_center")
     _safe_rerun()
 
 
