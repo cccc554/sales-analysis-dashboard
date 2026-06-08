@@ -515,9 +515,6 @@ def _render_top_products(kpis):
         products = products.sort_values(by=revenue_col, ascending=True)
 
         if px:
-            colors = [PRIMARY] * len(products)
-            if colors:
-                colors[-1] = ACCENT
             fig = px.bar(
                 products,
                 x=revenue_col,
@@ -525,17 +522,18 @@ def _render_top_products(kpis):
                 orientation="h",
                 title=f"<b>{_txt('top_products')}</b>",
                 labels={"_home_product": t("label_product"), revenue_col: t("label_revenue")},
-                color_discrete_sequence=[PRIMARY],
+                color_discrete_sequence=[ACCENT],
             )
             fig.update_traces(
-                marker_color=colors,
+                marker_color=ACCENT,
+                cliponaxis=False,
                 customdata=products[[product_col]].values,
                 hovertemplate="%{customdata[0]}<br>%{x:,.2f}<extra></extra>",
             )
             fig = apply_plotly_theme(fig, height=420)
-            fig.update_layout(bargap=0.28)
-            fig.update_xaxes(showgrid=False)
-            fig.update_yaxes(showgrid=False)
+            fig.update_layout(bargap=0.28, margin=dict(t=55, l=12, r=34, b=32))
+            fig.update_xaxes(showgrid=False, automargin=True)
+            fig.update_yaxes(showgrid=False, automargin=True)
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.bar_chart(products.set_index("_home_product")[revenue_col])

@@ -11,7 +11,8 @@ MUTED_TEXT = "#64748B"
 BORDER = "#E2E8F0"
 CARD = "#FFFFFF"
 CHART_COLORS = [PRIMARY, ACCENT, SUCCESS, WARNING, MUTED_TEXT]
-CHART_GRADIENT = [SECONDARY_BACKGROUND, "#DCEAF3", PRIMARY, ACCENT]
+CHART_GRADIENT = ["#F5F7FA", "#EAF1F7", "#DCEAF3", "#9FC9DA", PRIMARY, "#557AA9", ACCENT]
+BLUE_GRADIENT = ["#EEF6FF", "#D6EBFF", "#AED6FF", "#76B7F2", "#2E86AB", "#1D5F87"]
 PRIMARY_FILL = "rgba(46,134,171,0.18)"
 SHADOW = "0 10px 28px rgba(30, 41, 59, 0.08)"
 
@@ -32,6 +33,7 @@ def get_theme():
         "border": BORDER,
         "chart_colors": CHART_COLORS,
         "chart_gradient": CHART_GRADIENT,
+        "blue_gradient": BLUE_GRADIENT,
         "primary_fill": PRIMARY_FILL,
         "shadow": SHADOW,
     }
@@ -55,7 +57,10 @@ def get_global_css() -> str:
     --bi-shadow: {SHADOW};
 }}
 [data-testid="stAppViewContainer"] {{
-    background: linear-gradient(135deg, #F5F7FA 0%, #F8FAFC 52%, #FFFFFF 100%);
+    background:
+        radial-gradient(circle at 18% 12%, rgba(46, 134, 171, 0.24), transparent 32%),
+        radial-gradient(circle at 86% 18%, rgba(162, 59, 114, 0.16), transparent 30%),
+        linear-gradient(135deg, #DDE7F0 0%, #EEF3F7 42%, #F8FAFC 100%);
 }}
 [data-testid="stSidebarNav"] {{
     display: none;
@@ -77,8 +82,9 @@ def get_global_css() -> str:
 /* Main content background - light gray gradient */
 .main .block-container {{
     background:
-        radial-gradient(circle at 12% 0%, rgba(46, 134, 171, 0.08), transparent 34%),
-        linear-gradient(135deg, #F5F7FA 0%, #F8FAFC 54%, #FFFFFF 100%);
+        radial-gradient(circle at 8% 0%, rgba(255, 255, 255, 0.86), transparent 32%),
+        radial-gradient(circle at 92% 6%, rgba(46, 134, 171, 0.11), transparent 30%),
+        linear-gradient(135deg, rgba(245, 247, 250, 0.96) 0%, rgba(255, 255, 255, 0.88) 58%, rgba(238, 243, 247, 0.94) 100%);
     padding: 2rem;
     border-radius: 12px;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
@@ -106,6 +112,73 @@ div[data-testid="stMetric"],
 .ai-panel,
 .ai-card {{
     animation: biFadeInUp .42s ease both;
+}}
+@keyframes biBarGrow {{
+    from {{
+        opacity: .18;
+        transform: scaleY(.08);
+        transform-origin: bottom;
+    }}
+    to {{
+        opacity: 1;
+        transform: scaleY(1);
+        transform-origin: bottom;
+    }}
+}}
+@keyframes biLineDraw {{
+    from {{
+        stroke-dasharray: 900;
+        stroke-dashoffset: 900;
+        opacity: .45;
+    }}
+    to {{
+        stroke-dasharray: 900;
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }}
+}}
+@keyframes biPieReveal {{
+    from {{
+        opacity: .2;
+        transform: rotate(-24deg) scale(.96);
+    }}
+    to {{
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }}
+}}
+@keyframes biTreemapReveal {{
+    from {{
+        opacity: 0;
+        transform: scale(.985);
+    }}
+    to {{
+        opacity: 1;
+        transform: scale(1);
+    }}
+}}
+[data-testid="stPlotlyChart"] .barlayer .trace path {{
+    animation: biBarGrow .82s cubic-bezier(.2, .72, .2, 1) both;
+}}
+[data-testid="stPlotlyChart"] .scatterlayer .js-line {{
+    animation: biLineDraw 1s ease-out both;
+}}
+[data-testid="stPlotlyChart"] .pielayer .trace {{
+    transform-origin: center;
+    animation: biPieReveal .82s ease-out both;
+}}
+[data-testid="stPlotlyChart"] .treemaplayer g {{
+    transform-origin: center;
+    animation: biTreemapReveal .72s ease-out both;
+}}
+[data-testid="stPlotlyChart"] .treemaplayer g:nth-child(2) {{
+    animation-delay: .08s;
+}}
+[data-testid="stPlotlyChart"] .treemaplayer g:nth-child(3) {{
+    animation-delay: .14s;
+}}
+[data-testid="stPlotlyChart"] .treemaplayer g:nth-child(4) {{
+    animation-delay: .2s;
 }}
 h1, h2, h3 {{
     color: var(--bi-text);

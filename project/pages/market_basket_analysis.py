@@ -22,7 +22,7 @@ except Exception:
 from services import data_manager
 from services.ai_insights import render_ai_insights
 from services.translator import t
-from config.theme import CARD, CHART_GRADIENT, TEXT, apply_plotly_theme
+from config.theme import CARD, CHART_GRADIENT, TEXT as THEME_TEXT, apply_plotly_theme
 
 
 MAX_RULE_ITEMS = 300
@@ -381,7 +381,7 @@ def _render_network(rules_df: pd.DataFrame, item_counter: Counter, total_orders:
         yaxis=dict(visible=False),
         paper_bgcolor=CARD,
         plot_bgcolor=CARD,
-        font=dict(color=TEXT, family="Arial", size=12),
+        font=dict(color=THEME_TEXT, family="Arial", size=12),
         hovermode="closest",
     )
     fig = apply_plotly_theme(fig, height=560)
@@ -475,7 +475,7 @@ def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: 
             f"{_txt('share')}: %{{customdata[4]:.1f}}%<extra></extra>"
         ),
         textfont_size=15,
-        textfont_color=TEXT,
+        textfont_color=THEME_TEXT,
         marker=dict(line=dict(width=1, color=CARD)),
         root_color=CARD,
     )
@@ -484,8 +484,8 @@ def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: 
         margin=dict(t=58, l=8, r=8, b=8),
         paper_bgcolor=CARD,
         plot_bgcolor=CARD,
-        font=dict(size=15, color=TEXT, family="Arial"),
-        title=dict(font=dict(size=16, color=TEXT)),
+        font=dict(size=15, color=THEME_TEXT, family="Arial"),
+        title=dict(font=dict(size=16, color=THEME_TEXT)),
         coloraxis_showscale=False,
     )
     st.plotly_chart(fig, use_container_width=True)

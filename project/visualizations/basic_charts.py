@@ -14,13 +14,10 @@ def apply_theme(chart, height=None):
 
 
 def style_top_product_ranking(fig, top_count=None):
-    """Style a top product bar chart: primary bars, first rank accent."""
+    """Style a top product bar chart with the accent business color."""
     if fig is None:
         return fig
-    colors = [PRIMARY] * int(top_count or 1)
-    if colors:
-        colors[0] = ACCENT
-    fig.update_traces(marker_color=colors)
+    fig.update_traces(marker_color=ACCENT)
     return apply_plotly_theme(fig)
 
 

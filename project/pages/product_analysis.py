@@ -17,7 +17,7 @@ except Exception:
 from services import data_manager
 from services.ai_insights import render_ai_insights
 from services.translator import t
-from config.theme import ACCENT, CHART_COLORS, CHART_GRADIENT, PRIMARY, apply_plotly_theme
+from config.theme import ACCENT, BLUE_GRADIENT, CHART_COLORS, PRIMARY, apply_plotly_theme
 
 
 TEXT = {
@@ -155,6 +155,17 @@ def _clean_product_name(value) -> str:
     return text if text and text.lower() != "nan" else ""
 
 
+def _wrap_label(value, line_length: int = 18, max_lines: int = 3) -> str:
+    text = str(value).strip()
+    if len(text) <= line_length:
+        return text
+    lines = [text[index : index + line_length] for index in range(0, len(text), line_length)]
+    if len(lines) > max_lines:
+        lines = lines[:max_lines]
+        lines[-1] = lines[-1][: max(line_length - 3, 1)] + "..."
+    return "<br>".join(lines)
+
+
 def _positive_chart_df(product_summary: pd.DataFrame, top_n: int) -> pd.DataFrame:
     chart_df = product_summary[product_summary["revenue"] > 0].copy()
     return chart_df.sort_values("revenue", ascending=False).head(top_n)
@@ -176,7 +187,8 @@ def _bar_chart(data: pd.DataFrame, x_col: str, title: str, x_label: str):
         custom_data=["product_name", "quantity", "revenue"],
     )
     fig.update_traces(
-        marker_color=[ACCENT if idx == len(chart_df) - 1 else PRIMARY for idx in range(len(chart_df))],
+        marker_color=ACCENT,
+        cliponaxis=False,
         hovertemplate=(
             f"{_txt('product')}: %{{customdata[0]}}<br>"
             f"{_txt('quantity')}: %{{customdata[1]:,.0f}}<br>"
@@ -184,7 +196,9 @@ def _bar_chart(data: pd.DataFrame, x_col: str, title: str, x_label: str):
         )
     )
     fig = apply_plotly_theme(fig, height=430)
-    fig.update_layout(margin=dict(t=55, l=10, r=20, b=20))
+    fig.update_layout(margin=dict(t=55, l=10, r=30, b=24), bargap=0.28)
+    fig.update_xaxes(automargin=True)
+    fig.update_yaxes(automargin=True)
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -381,14 +395,16 @@ def render():
         with treemap_col:
             if px:
                 treemap_df = positive_df.copy()
+                treemap_df["product_label"] = treemap_df["product_name"].map(_wrap_label)
                 fig_tree = px.treemap(
                     treemap_df,
-                    path=["product_name"],
+                    path=["product_label"],
                     values="revenue",
                     color="revenue",
-                    color_continuous_scale=CHART_GRADIENT,
+                    color_continuous_scale=BLUE_GRADIENT,
                     title=_txt("treemap"),
-                    labels={"product_name": _txt("product"), "revenue": _txt("revenue")},
+                    labels={"product_label": _txt("product"), "revenue": _txt("revenue")},
+                    custom_data=["product_name"],
                 )
                 fig_tree.update_traces(
                     texttemplate=(
@@ -397,14 +413,18 @@ def render():
                         f"{_txt('revenue_share')}: %{{percentRoot:.1%}}"
                     ),
                     hovertemplate=(
-                        f"{_txt('product')}: %{{label}}<br>"
+                        f"{_txt('product')}: %{{customdata[0]}}<br>"
                         f"{_txt('revenue')}: %{{value:,.2f}}<br>"
                         f"{_txt('revenue_share')}: %{{percentRoot:.1%}}<extra></extra>"
                     ),
-                    textfont_size=15,
+                    textfont_size=13,
                 )
                 fig_tree = apply_plotly_theme(fig_tree, height=520)
-                fig_tree.update_layout(margin=dict(t=55, l=10, r=10, b=10))
+                fig_tree.update_layout(
+                    margin=dict(t=55, l=10, r=10, b=10),
+                    uniformtext=dict(minsize=10, mode="show"),
+                    coloraxis_showscale=True,
+                )
                 st.plotly_chart(fig_tree, use_container_width=True)
             else:
                 st.info(_txt("plotly_missing"))
