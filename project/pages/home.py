@@ -343,30 +343,38 @@ def _nav_button(label: str, page_key: str, key: str):
         st.rerun()
 
 
-def _go_to_dataset_center():
-    st.session_state.current_page = "dataset_center"
-    st.session_state.page_index = PAGE_KEYS.index("dataset_center")
+def _set_page_query_param(page_key: str):
     try:
-        st.query_params["page"] = "dataset_center"
+        if hasattr(st, "query_params"):
+            st.query_params["page"] = page_key
+        elif hasattr(st, "experimental_set_query_params"):
+            st.experimental_set_query_params(page=page_key)
     except Exception:
-        try:
-            st.experimental_set_query_params(page="dataset_center")
-        except Exception:
-            pass
+        pass
 
-    if hasattr(st, "rerun"):
-        st.rerun()
-    else:
-        st.experimental_rerun()
+
+def _safe_rerun():
+    rerun = getattr(st, "rerun", None)
+    if rerun is None:
+        rerun = getattr(st, "experimental_rerun", None)
+    if rerun is not None:
+        rerun()
+
+
+def _go_to_dataset_center():
+    _set_current_page("dataset_center")
+    _set_page_query_param("dataset_center")
+    _safe_rerun()
 
 
 def _render_missing_dataset_prompt():
-    prompt_col, button_col = st.columns([0.74, 0.26])
-    with prompt_col:
-        st.warning("⚠️ 当前首页没有数据，请先上传数据。")
-    with button_col:
-        if st.button("前往数据中心上传", key="home_go_dataset_center", use_container_width=True):
-            _go_to_dataset_center()
+    with st.container():
+        prompt_col, button_col = st.columns([3, 1])
+        with prompt_col:
+            st.warning("⚠️ 当前首页没有数据，请先上传数据。")
+        with button_col:
+            if st.button("前往数据中心上传", key="home_go_dataset_center", use_container_width=True):
+                _go_to_dataset_center()
 
 
 def _pill_list(items):
