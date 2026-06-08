@@ -22,6 +22,7 @@ except Exception:
 
 from services import data_manager
 from services.ai_insights import render_ai_insights
+from config.theme import PRIMARY, SUCCESS, WARNING, apply_plotly_theme
 
 
 TEXT = {
@@ -270,9 +271,9 @@ def _line_chart(title: str, x, y, name: str, color: str, dash: Optional[str] = N
             hovertemplate=f"{_txt('month')}: %{{x|%Y-%m}}<br>{_txt('sales')}: %{{y:,.2f}}<extra></extra>",
         )
     )
+    fig = apply_plotly_theme(fig, height=420)
     fig.update_layout(
         title=title,
-        height=420,
         margin=dict(t=55, l=20, r=20, b=20),
         xaxis_title=_txt("month"),
         yaxis_title=_txt("sales"),
@@ -293,7 +294,7 @@ def _forecast_comparison_chart(forecast: pd.DataFrame):
             y=forecast["Linear Regression"],
             mode="lines+markers",
             name=_txt("linear_regression"),
-            line=dict(color="#D95B5B", width=3, dash="dash"),
+            line=dict(color=WARNING, width=3, dash="dash"),
             marker=dict(size=7),
             hovertemplate=f"{_txt('forecast_month')}: %{{x|%Y-%m}}<br>{_txt('linear_regression')}: %{{y:,.2f}}<extra></extra>",
         )
@@ -304,14 +305,14 @@ def _forecast_comparison_chart(forecast: pd.DataFrame):
             y=forecast["Moving Average"],
             mode="lines+markers",
             name=_txt("moving_average"),
-            line=dict(color="#2C8C5A", width=3, dash="dot"),
+            line=dict(color=SUCCESS, width=3, dash="dot"),
             marker=dict(size=7),
             hovertemplate=f"{_txt('forecast_month')}: %{{x|%Y-%m}}<br>{_txt('moving_average')}: %{{y:,.2f}}<extra></extra>",
         )
     )
+    fig = apply_plotly_theme(fig, height=420)
     fig.update_layout(
         title=_txt("forecast_compare_chart"),
-        height=420,
         margin=dict(t=55, l=20, r=20, b=20),
         xaxis_title=_txt("month"),
         yaxis_title=_txt("sales"),
@@ -332,7 +333,7 @@ def _combined_chart(monthly: pd.DataFrame, forecast: pd.DataFrame):
             y=monthly["Sales"],
             mode="lines+markers",
             name=_txt("historical_sales"),
-            line=dict(color="#2E86AB", width=3),
+            line=dict(color=PRIMARY, width=3),
             marker=dict(size=7),
             hovertemplate=f"{_txt('month')}: %{{x|%Y-%m}}<br>{_txt('historical_sales')}: %{{y:,.2f}}<extra></extra>",
         )
@@ -343,7 +344,7 @@ def _combined_chart(monthly: pd.DataFrame, forecast: pd.DataFrame):
             y=forecast["Linear Regression"],
             mode="lines+markers",
             name=_txt("linear_regression"),
-            line=dict(color="#D95B5B", width=3, dash="dash"),
+            line=dict(color=WARNING, width=3, dash="dash"),
             marker=dict(size=7),
             hovertemplate=f"{_txt('forecast_month')}: %{{x|%Y-%m}}<br>{_txt('linear_regression')}: %{{y:,.2f}}<extra></extra>",
         )
@@ -354,14 +355,14 @@ def _combined_chart(monthly: pd.DataFrame, forecast: pd.DataFrame):
             y=forecast["Moving Average"],
             mode="lines+markers",
             name=_txt("moving_average"),
-            line=dict(color="#2C8C5A", width=3, dash="dot"),
+            line=dict(color=SUCCESS, width=3, dash="dot"),
             marker=dict(size=7),
             hovertemplate=f"{_txt('forecast_month')}: %{{x|%Y-%m}}<br>{_txt('moving_average')}: %{{y:,.2f}}<extra></extra>",
         )
     )
+    fig = apply_plotly_theme(fig, height=470)
     fig.update_layout(
         title=_txt("combined_chart"),
-        height=470,
         margin=dict(t=55, l=20, r=20, b=20),
         xaxis_title=_txt("month"),
         yaxis_title=_txt("sales"),
@@ -441,7 +442,7 @@ def render():
             monthly["Month"],
             monthly["Sales"],
             _txt("historical_sales"),
-            "#2E86AB",
+            PRIMARY,
         )
     with right:
         _forecast_comparison_chart(forecast)

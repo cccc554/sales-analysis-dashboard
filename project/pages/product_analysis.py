@@ -17,6 +17,7 @@ except Exception:
 from services import data_manager
 from services.ai_insights import render_ai_insights
 from services.translator import t
+from config.theme import ACCENT, CHART_COLORS, CHART_GRADIENT, PRIMARY, apply_plotly_theme
 
 
 TEXT = {
@@ -175,13 +176,15 @@ def _bar_chart(data: pd.DataFrame, x_col: str, title: str, x_label: str):
         custom_data=["product_name", "quantity", "revenue"],
     )
     fig.update_traces(
+        marker_color=[ACCENT if idx == len(chart_df) - 1 else PRIMARY for idx in range(len(chart_df))],
         hovertemplate=(
             f"{_txt('product')}: %{{customdata[0]}}<br>"
             f"{_txt('quantity')}: %{{customdata[1]:,.0f}}<br>"
             f"{_txt('revenue')}: %{{customdata[2]:,.2f}}<extra></extra>"
         )
     )
-    fig.update_layout(height=430, margin=dict(t=55, l=10, r=20, b=20))
+    fig = apply_plotly_theme(fig, height=430)
+    fig.update_layout(margin=dict(t=55, l=10, r=20, b=20))
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -349,13 +352,16 @@ def render():
                 )
                 fig_trend.update_traces(
                     mode="lines+markers",
+                    line=dict(color=PRIMARY, width=3),
+                    marker=dict(color=ACCENT, size=7),
                     hovertemplate=(
                         f"{_txt('product')}: %{{customdata[0]}}<br>"
                         f"{_txt('month')}: %{{customdata[1]|%Y-%m}}<br>"
                         f"{_txt('revenue')}: %{{customdata[2]:,.2f}}<extra></extra>"
                     ),
                 )
-                fig_trend.update_layout(height=430, margin=dict(t=60, l=20, r=20, b=20))
+                fig_trend = apply_plotly_theme(fig_trend, height=430)
+                fig_trend.update_layout(margin=dict(t=60, l=20, r=20, b=20))
                 st.plotly_chart(fig_trend, use_container_width=True)
             elif not px:
                 st.info(_txt("plotly_missing"))
@@ -380,7 +386,7 @@ def render():
                     path=["product_name"],
                     values="revenue",
                     color="revenue",
-                    color_continuous_scale="Blues",
+                    color_continuous_scale=CHART_GRADIENT,
                     title=_txt("treemap"),
                     labels={"product_name": _txt("product"), "revenue": _txt("revenue")},
                 )
@@ -397,7 +403,8 @@ def render():
                     ),
                     textfont_size=15,
                 )
-                fig_tree.update_layout(height=520, margin=dict(t=55, l=10, r=10, b=10))
+                fig_tree = apply_plotly_theme(fig_tree, height=520)
+                fig_tree.update_layout(margin=dict(t=55, l=10, r=10, b=10))
                 st.plotly_chart(fig_tree, use_container_width=True)
             else:
                 st.info(_txt("plotly_missing"))
@@ -421,6 +428,7 @@ def render():
                     values="revenue",
                     hole=0.45,
                     title=_txt("donut"),
+                    color_discrete_sequence=CHART_COLORS,
                 )
                 fig_donut.update_traces(
                     textinfo="percent+label",
@@ -430,7 +438,8 @@ def render():
                         f"{_txt('revenue_share')}: %{{percent}}<extra></extra>"
                     ),
                 )
-                fig_donut.update_layout(height=520, margin=dict(t=55, l=10, r=10, b=10))
+                fig_donut = apply_plotly_theme(fig_donut, height=520)
+                fig_donut.update_layout(margin=dict(t=55, l=10, r=10, b=10))
                 st.plotly_chart(fig_donut, use_container_width=True)
             else:
                 st.info(_txt("plotly_missing"))

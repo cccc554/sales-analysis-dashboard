@@ -1,6 +1,6 @@
 """Basic chart helpers with shared dashboard theming."""
 
-from config.theme import ACCENT, PRIMARY, SUCCESS, WARNING, apply_plotly_theme
+from config.theme import ACCENT, PRIMARY, PRIMARY_FILL, SUCCESS, WARNING, apply_plotly_theme
 
 
 RFM_COLORS = [PRIMARY, ACCENT, SUCCESS, WARNING]
@@ -41,7 +41,7 @@ def style_sales_trend(fig):
         line=dict(color=PRIMARY, width=3),
         marker=dict(color=PRIMARY),
         fill="tozeroy",
-        fillcolor="rgba(46,134,171,0.2)",
+        fillcolor=PRIMARY_FILL,
     )
     return apply_plotly_theme(fig)
 

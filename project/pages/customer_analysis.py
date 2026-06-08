@@ -20,6 +20,7 @@ except Exception:
 from services.translator import t
 from services import data_manager
 from services.ai_insights import render_ai_insights
+from config.theme import ACCENT, CARD, CHART_COLORS, PRIMARY, SECONDARY_BACKGROUND, SUCCESS, TEXT, WARNING, apply_plotly_theme
 
 
 def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
@@ -222,7 +223,8 @@ def render():
                 counts = counts.sort_values("count", ascending=False)
 
                 if px:
-                    fig = px.bar(counts, x="count", y="label", orientation="h", labels={"count": t("label_count"), "label": t("rfm_segments")}, title=seg_title)
+                    fig = px.bar(counts, x="count", y="label", orientation="h", labels={"count": t("label_count"), "label": t("rfm_segments")}, title=seg_title, color_discrete_sequence=[PRIMARY])
+                    fig = apply_plotly_theme(fig)
                     st.plotly_chart(fig, use_container_width=True)
                 else:
                     st.bar_chart(counts.set_index("label")["count"])
@@ -289,15 +291,16 @@ def render():
                 "cum_pct": cum_pct.values,
             })
             if px:
-                fig_pareto = px.line(pareto_df, x="rank", y="cum_pct", labels={"rank": t("kpi_total_customers"), "cum_pct": t("label_revenue")}, title=t("revenue_share"))
+                fig_pareto = px.line(pareto_df, x="rank", y="cum_pct", labels={"rank": t("kpi_total_customers"), "cum_pct": t("label_revenue")}, title=t("revenue_share"), color_discrete_sequence=[PRIMARY])
                 # mark 80% contribution position
                 idx80 = pareto_df[pareto_df["cum_pct"] >= 0.8].index
                 if len(idx80) > 0:
                     pos = int(pareto_df.loc[idx80[0], "rank"])
                     val = float(pareto_df.loc[idx80[0], "cum_pct"])
-                    fig_pareto.add_vline(x=pos, line_dash="dash", line_color="red")
+                    fig_pareto.add_vline(x=pos, line_dash="dash", line_color=WARNING)
                     fig_pareto.add_annotation(x=pos, y=val, text=f"80% -> {pos}", showarrow=True, arrowhead=2)
                 fig_pareto.update_yaxes(tickformat=".0%")
+                fig_pareto = apply_plotly_theme(fig_pareto)
                 st.plotly_chart(fig_pareto, use_container_width=True)
             else:
                 st.write(pareto_df)
@@ -323,8 +326,9 @@ def render():
             seg_counts = rfm["segment"].map(seg_map).value_counts().reset_index()
             seg_counts.columns = [t("rfm_segments"), t("label_count")]
             if px and not seg_counts.empty:
-                fig_donut = px.pie(seg_counts, names=t("rfm_segments"), values=t("label_count"), hole=0.4)
+                fig_donut = px.pie(seg_counts, names=t("rfm_segments"), values=t("label_count"), hole=0.4, color_discrete_sequence=CHART_COLORS)
                 fig_donut.update_traces(textinfo='percent+label', hovertemplate='%{label}: %{percent} (%{value})')
+                fig_donut = apply_plotly_theme(fig_donut)
                 st.plotly_chart(fig_donut, use_container_width=True)
             else:
                 st.table(seg_counts)
@@ -405,10 +409,10 @@ def render():
                     values="sales",
                     color="segment_label",
                     color_discrete_map={
-                        "High Value": "#2E86AB",
-                        "Loyal": "#2C8C5A",
-                        "Normal": "#A23B72",
-                        "At-risk": "#D95B5B",
+                        "High Value": PRIMARY,
+                        "Loyal": SUCCESS,
+                        "Normal": ACCENT,
+                        "At-risk": WARNING,
                     },
                     custom_data=["customer_count", "customer_pct", "sales", "sales_pct"],
                     labels=labels,
@@ -438,13 +442,13 @@ def render():
                     textfont_size=20,
                     textfont_family='Arial',
                     textfont_color='white',
-                    marker=dict(line=dict(width=2, color='white')),
+                    marker=dict(line=dict(width=2, color=CARD)),
                 )
 
+                fig = apply_plotly_theme(fig, height=600)
                 fig.update_layout(
-                    height=600,
                     margin=dict(t=50, l=25, r=25, b=25),
-                    font=dict(size=20),
+                    font=dict(size=20, color=TEXT),
                     uniformtext=dict(minsize=18, mode='show'),
                     coloraxis_showscale=False,
                 )
@@ -468,7 +472,8 @@ def render():
             mon_bins = pd.qcut(rfm["monetary"].fillna(0), q=5, duplicates='drop')
             heat = pd.crosstab(freq_bins, mon_bins)
             if px:
-                fig_heat = px.imshow(heat.values, x=[str(x) for x in heat.columns], y=[str(y) for y in heat.index], labels={"x": t("label_monetary_bins"), "y": t("label_frequency_bins"), "color": t("label_count")}, title=t("customer_behavior_heatmap"))
+                fig_heat = px.imshow(heat.values, x=[str(x) for x in heat.columns], y=[str(y) for y in heat.index], labels={"x": t("label_monetary_bins"), "y": t("label_frequency_bins"), "color": t("label_count")}, title=t("customer_behavior_heatmap"), color_continuous_scale=[[0, SECONDARY_BACKGROUND], [1, PRIMARY]])
+                fig_heat = apply_plotly_theme(fig_heat)
                 st.plotly_chart(fig_heat, use_container_width=True)
             else:
                 st.table(heat)

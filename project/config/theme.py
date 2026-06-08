@@ -11,6 +11,8 @@ MUTED_TEXT = "#64748B"
 BORDER = "#E2E8F0"
 CARD = "#FFFFFF"
 CHART_COLORS = [PRIMARY, ACCENT, SUCCESS, WARNING, MUTED_TEXT]
+CHART_GRADIENT = [SECONDARY_BACKGROUND, "#DCEAF3", PRIMARY, ACCENT]
+PRIMARY_FILL = "rgba(46,134,171,0.18)"
 SHADOW = "0 10px 28px rgba(30, 41, 59, 0.08)"
 
 
@@ -29,6 +31,8 @@ def get_theme():
         "muted_text": MUTED_TEXT,
         "border": BORDER,
         "chart_colors": CHART_COLORS,
+        "chart_gradient": CHART_GRADIENT,
+        "primary_fill": PRIMARY_FILL,
         "shadow": SHADOW,
     }
 
@@ -51,7 +55,7 @@ def get_global_css() -> str:
     --bi-shadow: {SHADOW};
 }}
 [data-testid="stAppViewContainer"] {{
-    background: var(--bi-bg);
+    background: linear-gradient(135deg, #F5F7FA 0%, #F8FAFC 52%, #FFFFFF 100%);
 }}
 [data-testid="stSidebarNav"] {{
     display: none;
@@ -72,9 +76,36 @@ def get_global_css() -> str:
 }}
 /* Main content background - light gray gradient */
 .main .block-container {{
-    background: linear-gradient(135deg, #F5F7FA 0%, #FFFFFF 100%);
+    background:
+        radial-gradient(circle at 12% 0%, rgba(46, 134, 171, 0.08), transparent 34%),
+        linear-gradient(135deg, #F5F7FA 0%, #F8FAFC 54%, #FFFFFF 100%);
     padding: 2rem;
     border-radius: 12px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}}
+@keyframes biFadeInUp {{
+    from {{
+        opacity: 0;
+        transform: translateY(10px);
+    }}
+    to {{
+        opacity: 1;
+        transform: translateY(0);
+    }}
+}}
+[data-testid="stPlotlyChart"],
+div[data-testid="stMetric"],
+.chart-panel,
+.sales-kpi-card,
+.home-kpi-card,
+.home-summary-card,
+.home-module-card,
+.dataset-card,
+.upload-card,
+.about-card,
+.ai-panel,
+.ai-card {{
+    animation: biFadeInUp .42s ease both;
 }}
 h1, h2, h3 {{
     color: var(--bi-text);
@@ -204,6 +235,11 @@ def apply_plotly_theme(fig, height: int | None = None):
         "plot_bgcolor": BACKGROUND,
         "font": {"color": TEXT, "family": "Arial", "size": 12},
         "colorway": CHART_COLORS,
+        "hoverlabel": {
+            "bgcolor": CARD,
+            "bordercolor": BORDER,
+            "font": {"color": TEXT, "family": "Arial", "size": 12},
+        },
         "margin": {"t": 55, "l": 24, "r": 20, "b": 30},
         "legend": {
             "font": {"size": 11, "color": MUTED_TEXT},

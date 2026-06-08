@@ -22,6 +22,7 @@ except Exception:
 from services import data_manager
 from services.ai_insights import render_ai_insights
 from services.translator import t
+from config.theme import CARD, CHART_GRADIENT, TEXT, apply_plotly_theme
 
 
 MAX_RULE_ITEMS = 300
@@ -282,7 +283,7 @@ def _render_top_combos(rules_df: pd.DataFrame, top_n: int):
         y="combo_short",
         orientation="h",
         color="support",
-        color_continuous_scale="Teal",
+        color_continuous_scale=CHART_GRADIENT,
         labels={"count": _txt("count"), "combo_short": _txt("combo"), "support": _txt("support")},
         title=_txt("top_combos", n=top_n),
         custom_data=["combo", "count", "support"],
@@ -294,7 +295,8 @@ def _render_top_combos(rules_df: pd.DataFrame, top_n: int):
             f"{_txt('share')}: %{{customdata[2]:.1%}}<extra></extra>"
         )
     )
-    fig.update_layout(height=450, margin=dict(t=55, l=10, r=20, b=20), coloraxis_showscale=True)
+    fig = apply_plotly_theme(fig, height=450)
+    fig.update_layout(margin=dict(t=55, l=10, r=20, b=20), coloraxis_showscale=True)
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -331,7 +333,7 @@ def _render_network(rules_df: pd.DataFrame, item_counter: Counter, total_orders:
                 x=[x0, x1],
                 y=[y0, y1],
                 mode="lines",
-                line=dict(width=width, color="rgba(90, 110, 130, 0.55)"),
+                line=dict(width=width, color="rgba(46, 134, 171, 0.48)"),
                 hoverinfo="text",
                 text=hover_text,
                 showlegend=False,
@@ -360,8 +362,8 @@ def _render_network(rules_df: pd.DataFrame, item_counter: Counter, total_orders:
             marker=dict(
                 size=node_sizes,
                 color=[item_counter[node] for node in nodes],
-                colorscale="Viridis",
-                line=dict(width=1.5, color="white"),
+                colorscale=CHART_GRADIENT,
+                line=dict(width=1.5, color=CARD),
                 showscale=True,
                 colorbar=dict(title=_txt("orders")),
             ),
@@ -377,9 +379,14 @@ def _render_network(rules_df: pd.DataFrame, item_counter: Counter, total_orders:
         margin=dict(t=60, l=20, r=20, b=20),
         xaxis=dict(visible=False),
         yaxis=dict(visible=False),
-        plot_bgcolor="white",
+        paper_bgcolor=CARD,
+        plot_bgcolor=CARD,
+        font=dict(color=TEXT, family="Arial", size=12),
         hovermode="closest",
     )
+    fig = apply_plotly_theme(fig, height=560)
+    fig.update_xaxes(visible=False)
+    fig.update_yaxes(visible=False)
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -444,7 +451,7 @@ def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: 
         parents="treemap_parent",
         values=value_col,
         color=value_col,
-        color_continuous_scale=["#F5F7FA", "#E2E8F0", "#2E86AB", "#2E86AB", "#1E293B"],
+        color_continuous_scale=CHART_GRADIENT,
         title=_txt("contribution"),
         custom_data=["combo", "count", "item_sales", "lift", "sales_share"],
         labels={"combo_treemap": _txt("combo"), value_col: metric_label},
@@ -468,18 +475,17 @@ def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: 
             f"{_txt('share')}: %{{customdata[4]:.1f}}%<extra></extra>"
         ),
         textfont_size=15,
-        textfont_color="#1E293B",
-        marker=dict(line=dict(width=1, color="#FFFFFF")),
-        root_color="#FFFFFF",
+        textfont_color=TEXT,
+        marker=dict(line=dict(width=1, color=CARD)),
+        root_color=CARD,
     )
+    fig = apply_plotly_theme(fig, height=700)
     fig.update_layout(
-        template="plotly_white",
-        height=700,
         margin=dict(t=58, l=8, r=8, b=8),
-        paper_bgcolor="#FFFFFF",
-        plot_bgcolor="#FFFFFF",
-        font=dict(size=15, color="#1E293B", family="Arial"),
-        title=dict(font=dict(size=16, color="#1E293B")),
+        paper_bgcolor=CARD,
+        plot_bgcolor=CARD,
+        font=dict(size=15, color=TEXT, family="Arial"),
+        title=dict(font=dict(size=16, color=TEXT)),
         coloraxis_showscale=False,
     )
     st.plotly_chart(fig, use_container_width=True)
