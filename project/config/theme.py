@@ -13,6 +13,7 @@ CARD = "#FFFFFF"
 CHART_COLORS = [PRIMARY, ACCENT, SUCCESS, WARNING, MUTED_TEXT]
 CHART_GRADIENT = ["#F5F7FA", "#EAF1F7", "#DCEAF3", "#9FC9DA", PRIMARY, "#557AA9", ACCENT]
 BLUE_GRADIENT = ["#EEF6FF", "#D6EBFF", "#AED6FF", "#76B7F2", "#2E86AB", "#1D5F87"]
+ACCENT_GRADIENT = ["#FFF1F8", "#F6D4E5", "#E9A8C8", "#D77BA9", ACCENT, "#6F2B56"]
 PRIMARY_FILL = "rgba(46,134,171,0.18)"
 SHADOW = "0 10px 28px rgba(30, 41, 59, 0.08)"
 
@@ -34,6 +35,7 @@ def get_theme():
         "chart_colors": CHART_COLORS,
         "chart_gradient": CHART_GRADIENT,
         "blue_gradient": BLUE_GRADIENT,
+        "accent_gradient": ACCENT_GRADIENT,
         "primary_fill": PRIMARY_FILL,
         "shadow": SHADOW,
     }
@@ -127,14 +129,12 @@ div[data-testid="stMetric"],
 }}
 @keyframes biLineDraw {{
     from {{
-        stroke-dasharray: 900;
-        stroke-dashoffset: 900;
-        opacity: .45;
+        opacity: .35;
+        transform: scaleX(.02);
     }}
     to {{
-        stroke-dasharray: 900;
-        stroke-dashoffset: 0;
         opacity: 1;
+        transform: scaleX(1);
     }}
 }}
 @keyframes biPieReveal {{
@@ -160,8 +160,14 @@ div[data-testid="stMetric"],
 [data-testid="stPlotlyChart"] .barlayer .trace path {{
     animation: biBarGrow .82s cubic-bezier(.2, .72, .2, 1) both;
 }}
-[data-testid="stPlotlyChart"] .scatterlayer .js-line {{
+[data-testid="stPlotlyChart"] .scatterlayer .trace {{
+    transform-box: fill-box;
+    transform-origin: left center;
     animation: biLineDraw 1s ease-out both;
+}}
+[data-testid="stPlotlyChart"] .scatterlayer .js-line {{
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
 }}
 [data-testid="stPlotlyChart"] .pielayer .trace {{
     transform-origin: center;

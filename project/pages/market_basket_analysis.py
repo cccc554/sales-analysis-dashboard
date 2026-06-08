@@ -22,7 +22,7 @@ except Exception:
 from services import data_manager
 from services.ai_insights import render_ai_insights
 from services.translator import t
-from config.theme import CARD, CHART_GRADIENT, TEXT as THEME_TEXT, apply_plotly_theme
+from config.theme import ACCENT_GRADIENT, BLUE_GRADIENT, CARD, TEXT as THEME_TEXT, apply_plotly_theme
 
 
 MAX_RULE_ITEMS = 300
@@ -173,6 +173,12 @@ def _format_money(value) -> str:
         return _txt("not_available")
 
 
+def _accent_edge_color(value: float, max_value: float) -> str:
+    ratio = 0.0 if max_value <= 0 else min(max(float(value) / max_value, 0.0), 1.0)
+    alpha = 0.28 + ratio * 0.54
+    return f"rgba(162, 59, 114, {alpha:.2f})"
+
+
 def _prepare_work_df(df: pd.DataFrame, product_col: str, order_col: str, qty_col: Optional[str], price_col: Optional[str]):
     work = df.copy()
     work["_order_id"] = work[order_col].map(_clean_text)
@@ -283,7 +289,7 @@ def _render_top_combos(rules_df: pd.DataFrame, top_n: int):
         y="combo_short",
         orientation="h",
         color="support",
-        color_continuous_scale=CHART_GRADIENT,
+        color_continuous_scale=BLUE_GRADIENT,
         labels={"count": _txt("count"), "combo_short": _txt("combo"), "support": _txt("support")},
         title=_txt("top_combos", n=top_n),
         custom_data=["combo", "count", "support"],
@@ -333,7 +339,7 @@ def _render_network(rules_df: pd.DataFrame, item_counter: Counter, total_orders:
                 x=[x0, x1],
                 y=[y0, y1],
                 mode="lines",
-                line=dict(width=width, color="rgba(46, 134, 171, 0.48)"),
+                line=dict(width=width, color=_accent_edge_color(row["lift"], max_lift)),
                 hoverinfo="text",
                 text=hover_text,
                 showlegend=False,
@@ -362,7 +368,7 @@ def _render_network(rules_df: pd.DataFrame, item_counter: Counter, total_orders:
             marker=dict(
                 size=node_sizes,
                 color=[item_counter[node] for node in nodes],
-                colorscale=CHART_GRADIENT,
+                colorscale=ACCENT_GRADIENT,
                 line=dict(width=1.5, color=CARD),
                 showscale=True,
                 colorbar=dict(title=_txt("orders")),
@@ -451,7 +457,7 @@ def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: 
         parents="treemap_parent",
         values=value_col,
         color=value_col,
-        color_continuous_scale=CHART_GRADIENT,
+        color_continuous_scale=BLUE_GRADIENT,
         title=_txt("contribution"),
         custom_data=["combo", "count", "item_sales", "lift", "sales_share"],
         labels={"combo_treemap": _txt("combo"), value_col: metric_label},
