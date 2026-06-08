@@ -186,6 +186,8 @@ HOME_TEXT = {
         "top_product": "TOP产品名称",
         "main_customer_country": "客户主要来源国家",
         "dataset_records": "当前数据集记录数",
+        "missing_dataset_prompt": "⚠️ 当前首页没有数据，请先上传数据。",
+        "go_dataset_center_upload": "前往数据中心上传",
         "records": "记录数",
     },
     "en": {
@@ -200,6 +202,8 @@ HOME_TEXT = {
         "top_product": "Top Product",
         "main_customer_country": "Main Customer Country",
         "dataset_records": "Dataset Records",
+        "missing_dataset_prompt": "No data is available on the home page. Please upload data first.",
+        "go_dataset_center_upload": "Go to Dataset Center",
         "records": "Records",
     },
 }
@@ -360,9 +364,9 @@ def _render_missing_dataset_prompt():
     with st.container():
         prompt_col, button_col = st.columns([3, 1])
         with prompt_col:
-            st.warning("⚠️ 当前首页没有数据，请先上传数据。")
+            st.warning(_txt("missing_dataset_prompt"))
         with button_col:
-            if st.button("前往数据中心上传", key="home_go_dataset_center", use_container_width=True):
+            if st.button(_txt("go_dataset_center_upload"), key="home_go_dataset_center", use_container_width=True):
                 _go_to_dataset_center()
 
 
