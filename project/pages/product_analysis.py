@@ -382,19 +382,18 @@ def render():
                     color="revenue",
                     color_continuous_scale="Blues",
                     title=_txt("treemap"),
-                    custom_data=["revenue", "revenue_share"],
                     labels={"product_name": _txt("product"), "revenue": _txt("revenue")},
                 )
                 fig_tree.update_traces(
                     texttemplate=(
                         f"<b>%{{label}}</b><br>"
-                        f"{_txt('revenue')}: %{{customdata[0]:,.2f}}<br>"
-                        f"{_txt('revenue_share')}: %{{customdata[1]:.1%}}"
+                        f"{_txt('revenue')}: %{{value:,.2f}}<br>"
+                        f"{_txt('revenue_share')}: %{{percentRoot:.1%}}"
                     ),
                     hovertemplate=(
                         f"{_txt('product')}: %{{label}}<br>"
-                        f"{_txt('revenue')}: %{{customdata[0]:,.2f}}<br>"
-                        f"{_txt('revenue_share')}: %{{customdata[1]:.1%}}<extra></extra>"
+                        f"{_txt('revenue')}: %{{value:,.2f}}<br>"
+                        f"{_txt('revenue_share')}: %{{percentRoot:.1%}}<extra></extra>"
                     ),
                     textfont_size=15,
                 )
@@ -422,14 +421,13 @@ def render():
                     values="revenue",
                     hole=0.45,
                     title=_txt("donut"),
-                    custom_data=["product_name", "revenue", "revenue_share"],
                 )
                 fig_donut.update_traces(
                     textinfo="percent+label",
                     hovertemplate=(
-                        f"{_txt('product')}: %{{customdata[0]}}<br>"
-                        f"{_txt('revenue')}: %{{customdata[1]:,.2f}}<br>"
-                        f"{_txt('revenue_share')}: %{{customdata[2]:.1%}}<extra></extra>"
+                        f"{_txt('product')}: %{{label}}<br>"
+                        f"{_txt('revenue')}: %{{value:,.2f}}<br>"
+                        f"{_txt('revenue_share')}: %{{percent}}<extra></extra>"
                     ),
                 )
                 fig_donut.update_layout(height=520, margin=dict(t=55, l=10, r=10, b=10))
