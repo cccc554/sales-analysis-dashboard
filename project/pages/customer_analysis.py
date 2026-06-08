@@ -1,4 +1,4 @@
-"""Customer Analysis 页面 — 客户仪表盘。
+﻿"""Customer Analysis 页面 — 客户仪表盘。
 
 布局：
 1) 客户核心指标（总客户数、活跃客户数、人均消费、人均订单数）
@@ -405,10 +405,10 @@ def render():
                     values="sales",
                     color="segment_label",
                     color_discrete_map={
-                        "High Value": "#1f77b4",
-                        "Loyal": "#2ca02c",
-                        "Normal": "#ff7f0e",
-                        "At-risk": "#d62728",
+                        "High Value": "#2E86AB",
+                        "Loyal": "#2C8C5A",
+                        "Normal": "#A23B72",
+                        "At-risk": "#D95B5B",
                     },
                     custom_data=["customer_count", "customer_pct", "sales", "sales_pct"],
                     labels=labels,

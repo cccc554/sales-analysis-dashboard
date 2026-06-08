@@ -1,4 +1,4 @@
-"""Dataset Center page."""
+﻿"""Dataset Center page."""
 
 import streamlit as st
 
@@ -9,7 +9,7 @@ from services.translator import t
 DATASET_CSS = """
 <style>
 .dataset-card {
-    border: 1px solid #E5E7EB;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
     padding: 20px;
     background: #FFFFFF;
@@ -17,7 +17,7 @@ DATASET_CSS = """
     min-height: 220px;
 }
 .dataset-card .source {
-    color: #2563EB;
+    color: #2E86AB;
     font-weight: 700;
     margin-bottom: 10px;
 }
@@ -34,8 +34,8 @@ DATASET_CSS = """
 .dataset-meta-item {
     flex: 1;
     border-radius: 12px;
-    background: #F8FAFC;
-    border: 1px solid #E5E7EB;
+    background: #F5F7FA;
+    border: 1px solid #E2E8F0;
     padding: 10px;
 }
 .dataset-meta-item .label {
@@ -43,20 +43,20 @@ DATASET_CSS = """
     font-size: 0.78rem;
 }
 .dataset-meta-item .value {
-    color: #0F172A;
+    color: #1E293B;
     font-weight: 700;
     margin-top: 4px;
 }
 .upload-zone {
-    border: 2px dashed #93C5FD;
+    border: 2px dashed #2E86AB;
     border-radius: 16px;
     padding: 28px;
-    background: linear-gradient(180deg, #EFF6FF, #FFFFFF);
+    background: linear-gradient(180deg, #F5F7FA, #FFFFFF);
     text-align: center;
     margin-bottom: 12px;
 }
 .upload-zone .title {
-    color: #0F172A;
+    color: #1E293B;
     font-size: 1.15rem;
     font-weight: 700;
 }
@@ -65,7 +65,7 @@ DATASET_CSS = """
     margin-top: 6px;
 }
 .file-info-card {
-    border: 1px solid #E5E7EB;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
     padding: 18px;
     background: #FFFFFF;

@@ -1,9 +1,10 @@
-"""Application entrypoint for the Streamlit retail BI dashboard."""
+﻿"""Application entrypoint for the Streamlit retail BI dashboard."""
 
 import importlib
 
 import streamlit as st
 
+from config.theme import get_global_css
 from config.settings import load_settings
 from services.translator import Translator, t
 
@@ -11,15 +12,15 @@ from services.translator import Translator, t
 GLOBAL_CSS = """
 <style>
 :root {
-    --bi-primary: #2563EB;
-    --bi-primary-2: #3B82F6;
-    --bi-success: #10B981;
-    --bi-warning: #F59E0B;
-    --bi-danger: #EF4444;
-    --bi-bg: #F8FAFC;
+    --bi-primary: #2E86AB;
+    --bi-primary-2: #A23B72;
+    --bi-success: #2C8C5A;
+    --bi-warning: #D95B5B;
+    --bi-danger: #D95B5B;
+    --bi-bg: #F5F7FA;
     --bi-card: #FFFFFF;
-    --bi-border: #E5E7EB;
-    --bi-text: #0F172A;
+    --bi-border: #E2E8F0;
+    --bi-text: #1E293B;
     --bi-muted: #64748B;
     --bi-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
 }
@@ -30,13 +31,13 @@ GLOBAL_CSS = """
     display: none;
 }
 [data-testid="stSidebar"] {
-    background: #0F172A;
+    background: #1E293B;
 }
 [data-testid="stSidebar"] * {
-    color: #E5E7EB;
+    color: #E2E8F0;
 }
 [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
-    color: #CBD5E1;
+    color: #E2E8F0;
 }
 .block-container {
     padding-top: 2rem;
@@ -56,7 +57,7 @@ p, label, span, div {
     border-radius: 16px;
     padding: 18px 16px;
     margin: 0 0 18px 0;
-    background: linear-gradient(135deg, #1E3A8A, #2563EB);
+    background: linear-gradient(135deg, #2E86AB, #2E86AB);
     box-shadow: 0 14px 32px rgba(37, 99, 235, 0.22);
 }
 .bi-sidebar-logo .mark {
@@ -78,13 +79,13 @@ p, label, span, div {
     line-height: 1.35;
 }
 .bi-sidebar-logo .subtitle {
-    color: #BFDBFE;
+    color: #E2E8F0;
     font-size: 0.82rem;
     margin-top: 4px;
 }
 .bi-nav-group {
     margin: 18px 0 8px 0;
-    color: #93C5FD;
+    color: #2E86AB;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -94,7 +95,7 @@ p, label, span, div {
     border-radius: 12px;
     border: 1px solid rgba(148, 163, 184, 0.16);
     background: rgba(15, 23, 42, 0.28);
-    color: #E5E7EB;
+    color: #E2E8F0;
     min-height: 42px;
     justify-content: flex-start;
     transition: all .16s ease;
@@ -104,7 +105,7 @@ p, label, span, div {
     background: rgba(37, 99, 235, 0.22);
 }
 [data-testid="stSidebar"] div.stButton > button[kind="primary"] {
-    background: linear-gradient(135deg, #2563EB, #3B82F6);
+    background: linear-gradient(135deg, #2E86AB, #A23B72);
     color: #FFFFFF;
     border-color: rgba(255, 255, 255, 0.16);
 }
@@ -132,18 +133,18 @@ div.stButton > button {
     border-color: var(--bi-border);
 }
 div.stButton > button[kind="primary"] {
-    background: #2563EB;
-    border-color: #2563EB;
+    background: #2E86AB;
+    border-color: #2E86AB;
     color: #FFFFFF !important;
 }
 div.stButton > button[kind="secondary"] {
     background: #FFFFFF;
-    border: 1px solid #CBD5E1;
-    color: #334155;
+    border: 1px solid #E2E8F0;
+    color: #1E293B;
 }
 div.stButton > button[kind="secondary"]:hover {
-    border-color: #2563EB;
-    color: #2563EB;
+    border-color: #2E86AB;
+    color: #2E86AB;
 }
 [data-testid="stDataFrame"], [data-testid="stTable"] {
     border-radius: 16px;
@@ -314,7 +315,7 @@ def main():
 
     translator = Translator()
     st.set_page_config(page_title=t("platform_title"), layout="wide")
-    st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
+    st.markdown(get_global_css(), unsafe_allow_html=True)
     render_language_switch(translator)
 
     current_page = get_current_page()

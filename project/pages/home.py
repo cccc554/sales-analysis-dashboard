@@ -1,4 +1,4 @@
-"""Home dashboard page for the e-commerce retail analytics platform."""
+﻿"""Home dashboard page for the e-commerce retail analytics platform."""
 
 from typing import Optional
 
@@ -28,7 +28,7 @@ HOME_CSS = """
     border-radius: 16px;
     padding: 34px 36px;
     margin-bottom: 22px;
-    background: linear-gradient(135deg, #2563EB, #3B82F6);
+    background: linear-gradient(135deg, #2E86AB, #A23B72);
     box-shadow: 0 18px 46px rgba(37, 99, 235, 0.22);
     color: #FFFFFF;
 }
@@ -41,11 +41,11 @@ HOME_CSS = """
 }
 .home-hero p {
     margin: 0;
-    color: #DBEAFE;
+    color: #E2E8F0;
     font-size: 1.08rem;
 }
 .home-kpi-card {
-    border: 1px solid #E5E7EB;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
     padding: 20px 20px;
     background: #FFFFFF;
@@ -63,19 +63,19 @@ HOME_CSS = """
     margin-bottom: 12px;
 }
 .home-kpi-card .value {
-    color: #0F172A;
+    color: #1E293B;
     font-size: 1.85rem;
     line-height: 1.1;
     font-weight: 700;
 }
 .home-section-title {
     margin: 28px 0 14px 0;
-    color: #0F172A;
+    color: #1E293B;
     font-size: 1.35rem;
     font-weight: 700;
 }
 .home-module-card {
-    border: 1px solid #E5E7EB;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
     padding: 18px 18px;
     background: #FFFFFF;
@@ -85,7 +85,7 @@ HOME_CSS = """
 }
 .home-module-card:hover {
     transform: scale(1.015);
-    border-color: #93C5FD;
+    border-color: #2E86AB;
     box-shadow: 0 18px 42px rgba(37, 99, 235, 0.14);
 }
 .home-module-code {
@@ -96,15 +96,15 @@ HOME_CSS = """
     height: 30px;
     padding: 0 10px;
     border-radius: 999px;
-    background: #EFF6FF;
-    color: #2563EB;
+    background: #F5F7FA;
+    color: #2E86AB;
     font-size: 0.78rem;
     font-weight: 700;
     margin-bottom: 12px;
 }
 .home-module-card h3 {
     margin: 0 0 8px 0;
-    color: #0F172A;
+    color: #1E293B;
     font-size: 1.05rem;
     font-weight: 700;
 }
@@ -116,12 +116,12 @@ HOME_CSS = """
 }
 .home-pill {
     display: inline-block;
-    border: 1px solid #DBEAFE;
+    border: 1px solid #E2E8F0;
     border-radius: 999px;
     padding: 8px 13px;
     margin: 5px 7px 5px 0;
-    background: #EFF6FF;
-    color: #1D4ED8;
+    background: #F5F7FA;
+    color: #2E86AB;
     font-size: 0.9rem;
 }
 </style>

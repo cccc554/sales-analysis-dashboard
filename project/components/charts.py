@@ -1,7 +1,22 @@
-"""图表组件。
-封装基础图表、仪表盘和高级可视化的接口。"""
+"""Shared chart component helpers."""
+
+from config.theme import apply_plotly_theme
+
+
+def apply_chart_theme(chart, height=None):
+    """Apply the global Plotly theme when the object is a Plotly figure."""
+    if hasattr(chart, "update_layout"):
+        return apply_plotly_theme(chart, height=height)
+    if isinstance(chart, dict):
+        themed = dict(chart)
+        for key, value in themed.items():
+            themed[key] = apply_chart_theme(value, height=height)
+        return themed
+    if isinstance(chart, list):
+        return [apply_chart_theme(value, height=height) for value in chart]
+    return chart
 
 
 def plot_placeholder(translator):
-    """返回提示图表结构。"""
-    return {"message": translator.translate("图表将在此处显示。")}
+    """Return a placeholder chart message."""
+    return {"message": translator.translate("chart_placeholder")}

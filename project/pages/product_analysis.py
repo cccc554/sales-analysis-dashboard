@@ -1,4 +1,4 @@
-"""Product Analysis page.
+﻿"""Product Analysis page.
 
 Builds product-level KPIs, rankings, trends, contribution charts, and a
 downloadable product summary table from the currently loaded dataset.

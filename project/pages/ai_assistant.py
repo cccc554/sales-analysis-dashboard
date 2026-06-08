@@ -1,4 +1,4 @@
-"""AI data analysis assistant page."""
+﻿"""AI data analysis assistant page."""
 
 from collections import Counter
 from itertools import combinations
@@ -85,15 +85,15 @@ AI_PANEL_TEXT = {
 AI_CSS = """
 <style>
 .ai-page-header {
-    border: 1px solid #DBEAFE;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
     padding: 24px 26px;
-    background: linear-gradient(135deg, #EFF6FF, #FFFFFF);
+    background: linear-gradient(135deg, #F5F7FA, #FFFFFF);
     margin-bottom: 18px;
 }
 .ai-page-header h1 {
     margin: 0 0 8px 0;
-    color: #0F172A;
+    color: #1E293B;
     font-weight: 700;
 }
 .ai-page-header p {
@@ -101,7 +101,7 @@ AI_CSS = """
     color: #64748B;
 }
 .ai-panel {
-    border: 1px solid #E5E7EB;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
     padding: 18px;
     background: #FFFFFF;
@@ -110,7 +110,7 @@ AI_CSS = """
 }
 .ai-panel h3 {
     margin: 0 0 12px 0;
-    color: #0F172A;
+    color: #1E293B;
     font-size: 1.08rem;
     font-weight: 700;
 }
@@ -127,14 +127,14 @@ AI_CSS = """
     border: 1px solid transparent;
 }
 .ai-status-connected {
-    color: #047857;
-    background: #ECFDF5;
-    border-color: #A7F3D0;
+    color: #2C8C5A;
+    background: #F5F7FA;
+    border-color: #2C8C5A;
 }
 .ai-status-disconnected {
-    color: #B91C1C;
-    background: #FEF2F2;
-    border-color: #FECACA;
+    color: #D95B5B;
+    background: #F5F7FA;
+    border-color: #D95B5B;
 }
 </style>
 """

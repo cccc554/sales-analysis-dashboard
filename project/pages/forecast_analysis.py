@@ -1,4 +1,4 @@
-"""Forecast Analysis page.
+﻿"""Forecast Analysis page.
 
 Aggregates monthly sales and compares Linear Regression and Moving Average
 forecasts for the next six months.
@@ -293,7 +293,7 @@ def _forecast_comparison_chart(forecast: pd.DataFrame):
             y=forecast["Linear Regression"],
             mode="lines+markers",
             name=_txt("linear_regression"),
-            line=dict(color="#d62728", width=3, dash="dash"),
+            line=dict(color="#D95B5B", width=3, dash="dash"),
             marker=dict(size=7),
             hovertemplate=f"{_txt('forecast_month')}: %{{x|%Y-%m}}<br>{_txt('linear_regression')}: %{{y:,.2f}}<extra></extra>",
         )
@@ -304,7 +304,7 @@ def _forecast_comparison_chart(forecast: pd.DataFrame):
             y=forecast["Moving Average"],
             mode="lines+markers",
             name=_txt("moving_average"),
-            line=dict(color="#2ca02c", width=3, dash="dot"),
+            line=dict(color="#2C8C5A", width=3, dash="dot"),
             marker=dict(size=7),
             hovertemplate=f"{_txt('forecast_month')}: %{{x|%Y-%m}}<br>{_txt('moving_average')}: %{{y:,.2f}}<extra></extra>",
         )
@@ -332,7 +332,7 @@ def _combined_chart(monthly: pd.DataFrame, forecast: pd.DataFrame):
             y=monthly["Sales"],
             mode="lines+markers",
             name=_txt("historical_sales"),
-            line=dict(color="#1f77b4", width=3),
+            line=dict(color="#2E86AB", width=3),
             marker=dict(size=7),
             hovertemplate=f"{_txt('month')}: %{{x|%Y-%m}}<br>{_txt('historical_sales')}: %{{y:,.2f}}<extra></extra>",
         )
@@ -343,7 +343,7 @@ def _combined_chart(monthly: pd.DataFrame, forecast: pd.DataFrame):
             y=forecast["Linear Regression"],
             mode="lines+markers",
             name=_txt("linear_regression"),
-            line=dict(color="#d62728", width=3, dash="dash"),
+            line=dict(color="#D95B5B", width=3, dash="dash"),
             marker=dict(size=7),
             hovertemplate=f"{_txt('forecast_month')}: %{{x|%Y-%m}}<br>{_txt('linear_regression')}: %{{y:,.2f}}<extra></extra>",
         )
@@ -354,7 +354,7 @@ def _combined_chart(monthly: pd.DataFrame, forecast: pd.DataFrame):
             y=forecast["Moving Average"],
             mode="lines+markers",
             name=_txt("moving_average"),
-            line=dict(color="#2ca02c", width=3, dash="dot"),
+            line=dict(color="#2C8C5A", width=3, dash="dot"),
             marker=dict(size=7),
             hovertemplate=f"{_txt('forecast_month')}: %{{x|%Y-%m}}<br>{_txt('moving_average')}: %{{y:,.2f}}<extra></extra>",
         )
@@ -441,7 +441,7 @@ def render():
             monthly["Month"],
             monthly["Sales"],
             _txt("historical_sales"),
-            "#1f77b4",
+            "#2E86AB",
         )
     with right:
         _forecast_comparison_chart(forecast)

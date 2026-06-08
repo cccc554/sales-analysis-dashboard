@@ -1,4 +1,4 @@
-"""Market Basket Analysis page.
+﻿"""Market Basket Analysis page.
 
 Builds basket KPIs, frequent item combinations, a rule network, contribution
 charts, and a downloadable association table from the current dataset.
@@ -444,7 +444,7 @@ def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: 
         parents="treemap_parent",
         values=value_col,
         color=value_col,
-        color_continuous_scale=["#EDF5FF", "#B5D2FF", "#60A5FF", "#3369BA", "#2E4E7F"],
+        color_continuous_scale=["#F5F7FA", "#E2E8F0", "#2E86AB", "#2E86AB", "#1E293B"],
         title=_txt("contribution"),
         custom_data=["combo", "count", "item_sales", "lift", "sales_share"],
         labels={"combo_treemap": _txt("combo"), value_col: metric_label},
@@ -468,7 +468,7 @@ def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: 
             f"{_txt('share')}: %{{customdata[4]:.1f}}%<extra></extra>"
         ),
         textfont_size=15,
-        textfont_color="#0F172A",
+        textfont_color="#1E293B",
         marker=dict(line=dict(width=1, color="#FFFFFF")),
         root_color="#FFFFFF",
     )
@@ -478,8 +478,8 @@ def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: 
         margin=dict(t=58, l=8, r=8, b=8),
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font=dict(size=15, color="#0F172A", family="Arial"),
-        title=dict(font=dict(size=16, color="#0F172A")),
+        font=dict(size=15, color="#1E293B", family="Arial"),
+        title=dict(font=dict(size=16, color="#1E293B")),
         coloraxis_showscale=False,
     )
     st.plotly_chart(fig, use_container_width=True)

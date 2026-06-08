@@ -1,4 +1,4 @@
-"""Sales analysis page with enterprise BI dashboard styling."""
+﻿"""Sales analysis page with enterprise BI dashboard styling."""
 
 from html import escape
 from typing import Optional
@@ -16,20 +16,20 @@ from services.ai_insights import render_ai_insights
 from services.translator import t
 
 
-PRIMARY = "#2563EB"
-SECONDARY = "#3B82F6"
-SUCCESS = "#10B981"
-WARNING = "#F59E0B"
-DANGER = "#EF4444"
-BORDER = "#E5E7EB"
-TEXT_DARK = "#0F172A"
+PRIMARY = "#2E86AB"
+SECONDARY = "#A23B72"
+SUCCESS = "#2C8C5A"
+WARNING = "#D95B5B"
+DANGER = "#D95B5B"
+BORDER = "#E2E8F0"
+TEXT_DARK = "#1E293B"
 TEXT_MUTED = "#64748B"
 
 
 SALES_CSS = """
 <style>
 .sales-hero {
-    background: linear-gradient(135deg, #2563EB, #3B82F6);
+    background: linear-gradient(135deg, #2E86AB, #A23B72);
     border-radius: 16px;
     padding: 28px 32px;
     color: #FFFFFF;
@@ -57,7 +57,7 @@ SALES_CSS = """
 }
 .sales-kpi-card {
     background: #FFFFFF;
-    border: 1px solid #E5E7EB;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
@@ -76,7 +76,7 @@ SALES_CSS = """
     margin-bottom: 12px;
 }
 .sales-kpi-value {
-    color: #0F172A;
+    color: #1E293B;
     font-size: 28px;
     font-weight: 700;
     line-height: 1.1;
@@ -89,7 +89,7 @@ SALES_CSS = """
 }
 .chart-panel {
     background: #FFFFFF;
-    border: 1px solid #E5E7EB;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
     padding: 18px 18px 8px 18px;
     box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
@@ -394,7 +394,7 @@ def render():
                     title=t("revenue_share"),
                     hole=0.48,
                     labels={names_col: name_label, rev_col: t("label_revenue")},
-                    color_discrete_sequence=[PRIMARY, SECONDARY, SUCCESS, WARNING, DANGER, "#6366F1", "#14B8A6", "#84CC16", "#F97316", "#64748B"],
+                    color_discrete_sequence=[PRIMARY, SECONDARY, SUCCESS, WARNING, DANGER, "#64748B", "#2C8C5A", "#2C8C5A", "#D95B5B", "#64748B"],
                 )
                 fig3.update_traces(textinfo="percent+label", hovertemplate="%{label}<br>%{value:,.2f}<br>%{percent}<extra></extra>")
                 st.plotly_chart(_style_figure(fig3, height=430), use_container_width=True)

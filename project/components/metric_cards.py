@@ -1,7 +1,15 @@
-"""指标卡片组件。
-定义关键指标展示卡片的接口和描述。"""
+"""Metric card data helpers."""
+
+from config.theme import PRIMARY
 
 
 def build_cards(metrics, translator):
-    """返回卡片数据结构。"""
-    return [{"label": translator.translate(name), "value": value} for name, value in metrics.items()]
+    """Return metric card data with themed value color."""
+    return [
+        {
+            "label": translator.translate(name),
+            "value": value,
+            "value_color": PRIMARY,
+        }
+        for name, value in metrics.items()
+    ]

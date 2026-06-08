@@ -1,4 +1,4 @@
-"""About page for the e-commerce retail analytics platform."""
+﻿"""About page for the e-commerce retail analytics platform."""
 
 import streamlit as st
 
@@ -10,7 +10,7 @@ ABOUT_CSS = """
 .about-hero {
     border-radius: 16px;
     padding: 30px 32px;
-    background: linear-gradient(135deg, #1E3A8A, #2563EB);
+    background: linear-gradient(135deg, #2E86AB, #2E86AB);
     color: #FFFFFF;
     box-shadow: 0 18px 46px rgba(37, 99, 235, 0.22);
     margin-bottom: 22px;
@@ -22,10 +22,10 @@ ABOUT_CSS = """
 }
 .about-hero p {
     margin: 0;
-    color: #DBEAFE;
+    color: #E2E8F0;
 }
 .about-card {
-    border: 1px solid #E5E7EB;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
     padding: 20px;
     margin-bottom: 16px;
@@ -34,7 +34,7 @@ ABOUT_CSS = """
 }
 .about-card h3 {
     margin: 0 0 12px 0;
-    color: #0F172A;
+    color: #1E293B;
     font-weight: 700;
 }
 .about-card p {
@@ -43,12 +43,12 @@ ABOUT_CSS = """
 }
 .about-pill {
     display: inline-block;
-    border: 1px solid #DBEAFE;
+    border: 1px solid #E2E8F0;
     border-radius: 999px;
     padding: 8px 13px;
     margin: 5px 7px 5px 0;
-    background: #EFF6FF;
-    color: #1D4ED8;
+    background: #F5F7FA;
+    color: #2E86AB;
     font-size: 0.9rem;
 }
 .arch-grid {
@@ -57,20 +57,20 @@ ABOUT_CSS = """
     gap: 12px;
 }
 .arch-node {
-    border: 1px solid #DBEAFE;
+    border: 1px solid #E2E8F0;
     border-radius: 16px;
-    background: #F8FAFC;
+    background: #F5F7FA;
     padding: 16px;
     min-height: 104px;
 }
 .arch-node .step {
-    color: #2563EB;
+    color: #2E86AB;
     font-size: 0.78rem;
     font-weight: 700;
     margin-bottom: 8px;
 }
 .arch-node .name {
-    color: #0F172A;
+    color: #1E293B;
     font-weight: 700;
 }
 .arch-node .desc {
