@@ -199,12 +199,23 @@ def render():
         label_visibility="collapsed",
     )
     if uploaded is not None:
-        df_u, meta_u = dataset_loader.load_uploaded_file(uploaded)
+        try:
+            df_u, meta_u = dataset_loader.load_uploaded_file(uploaded)
+        except Exception:
+            df_u, meta_u = None, {"status": "parse_failed", "error_key": "upload_parse_failed"}
+
         if df_u is not None:
-            data_manager.save_dataset(meta_u.get("filename"), df_u, {"source": "uploaded"})
-            st.success(t("upload_success"))
+            try:
+                data_manager.save_dataset(meta_u.get("filename"), df_u, {"source": "uploaded"})
+                st.success(t("upload_success"))
+            except Exception:
+                st.error(t("dataset_save_error"))
         else:
-            st.error(meta_u.get("error", t("upload_error")))
+            error_key = meta_u.get("error_key") or "upload_error"
+            if meta_u.get("status") in {"empty_file", "empty_dataset", "invalid_format"}:
+                st.warning(t(error_key))
+            else:
+                st.error(t(error_key))
 
     st.markdown("---")
 

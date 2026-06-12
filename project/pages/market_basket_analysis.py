@@ -27,6 +27,7 @@ from config.theme import ACCENT_GRADIENT, BLUE_GRADIENT, CARD, TEXT as THEME_TEX
 
 MAX_RULE_ITEMS = 300
 MAX_ITEMS_PER_ORDER_FOR_RULES = 50
+ANALYSIS_CACHE_TTL_SECONDS = 1800
 
 
 TEXT = {
@@ -70,6 +71,13 @@ TEXT = {
         "no_rules": "No product combinations were found. Orders need at least two distinct products.",
         "no_date": "No valid date field was found; date filtering is unavailable.",
         "revenue_unavailable": "Revenue fields were not found; contribution charts use order counts.",
+        "invalid_dataset": "The current dataset is invalid or cannot be parsed.",
+        "data_parse_failed": "Failed to parse dataset fields. Please check the column names and data format.",
+        "date_parse_failed": "Date parsing failed; date filtering is unavailable for this dataset.",
+        "preprocessing_failed": "Data cleaning failed. Please check whether order and product fields contain valid values.",
+        "rule_compute_failed": "Association rule calculation failed. Please check the dataset content and try again.",
+        "chart_render_failed": "This chart could not be rendered. Please adjust filters or check the dataset.",
+        "export_failed": "CSV export failed. Please adjust filters or check the analysis table.",
     },
     "zh": {
         "page_summary": "发现高频同购商品组合和商品关联规则。",
@@ -111,6 +119,13 @@ TEXT = {
         "no_rules": "没有找到商品组合。订单中至少需要包含两个不同商品。",
         "no_date": "未识别到有效日期字段，无法使用日期筛选。",
         "revenue_unavailable": "未识别到销售额字段，贡献图将使用订单数量。",
+        "invalid_dataset": "当前数据集无效或无法解析。",
+        "data_parse_failed": "数据字段解析失败，请检查列名和数据格式。",
+        "date_parse_failed": "日期解析失败，当前数据集无法使用日期筛选。",
+        "preprocessing_failed": "数据清洗失败，请检查订单字段和商品字段是否包含有效值。",
+        "rule_compute_failed": "关联规则计算失败，请检查数据集内容后重试。",
+        "chart_render_failed": "当前图表渲染失败，请调整筛选条件或检查数据集。",
+        "export_failed": "CSV 导出失败，请调整筛选条件或检查分析表。",
     },
 }
 
@@ -179,6 +194,7 @@ def _accent_edge_color(value: float, max_value: float) -> str:
     return f"rgba(162, 59, 114, {alpha:.2f})"
 
 
+@st.cache_data(ttl=ANALYSIS_CACHE_TTL_SECONDS, show_spinner=False)
 def _prepare_work_df(df: pd.DataFrame, product_col: str, order_col: str, qty_col: Optional[str], price_col: Optional[str]):
     work = df.copy()
     work["_order_id"] = work[order_col].map(_clean_text)
@@ -196,6 +212,7 @@ def _prepare_work_df(df: pd.DataFrame, product_col: str, order_col: str, qty_col
     return work, revenue_available
 
 
+@st.cache_data(ttl=ANALYSIS_CACHE_TTL_SECONDS, show_spinner=False)
 def _compute_rules(work: pd.DataFrame, revenue_available: bool):
     total_orders = int(work["_order_id"].nunique())
     if total_orders == 0:
@@ -508,17 +525,27 @@ def render():
         return
 
     df = cur.get("df")
-    if df is None or df.empty:
+    if df is None:
+        st.info(_txt("no_dataset"))
+        return
+    if not isinstance(df, pd.DataFrame):
+        st.error(_txt("invalid_dataset"))
+        return
+    if df.empty:
         st.info(_txt("no_dataset"))
         return
 
     df = df.copy()
-    product_col = _find_column(df, ["description", "product", "productname", "product name", "item", "stockcode", "sku"])
-    order_col = _find_column(df, ["invoiceno", "invoice", "orderid", "order_id", "order no", "order"])
-    qty_col = _find_column(df, ["quantity", "qty", "units"])
-    price_col = _find_column(df, ["unitprice", "unit price", "unit_price", "price"])
-    date_col = _find_column(df, ["invoicedate", "invoice date", "date", "orderdate", "order_date", "timestamp"])
-    category_col = _find_column(df, ["category", "product category", "product_category", "categoryname", "department", "class", "subcategory"])
+    try:
+        product_col = _find_column(df, ["description", "product", "productname", "product name", "item", "stockcode", "sku"])
+        order_col = _find_column(df, ["invoiceno", "invoice", "orderid", "order_id", "order no", "order"])
+        qty_col = _find_column(df, ["quantity", "qty", "units"])
+        price_col = _find_column(df, ["unitprice", "unit price", "unit_price", "price"])
+        date_col = _find_column(df, ["invoicedate", "invoice date", "date", "orderdate", "order_date", "timestamp"])
+        category_col = _find_column(df, ["category", "product category", "product_category", "categoryname", "department", "class", "subcategory"])
+    except Exception:
+        st.error(_txt("data_parse_failed"))
+        return
     if category_col == product_col:
         category_col = None
 
@@ -535,7 +562,11 @@ def render():
         return
 
     if date_col:
-        df["_date"] = pd.to_datetime(df[date_col], errors="coerce")
+        try:
+            df["_date"] = pd.to_datetime(df[date_col], errors="coerce")
+        except Exception:
+            date_col = None
+            st.warning(_txt("date_parse_failed"))
 
     with st.sidebar.expander(_txt("controls"), expanded=True):
         top_n = st.selectbox(_txt("top_n"), [5, 10, 12, 20], index=2, key="basket_top_n")
@@ -562,12 +593,20 @@ def render():
             if selected_category != _txt("all_categories"):
                 df = df[df[category_col].astype(str) == selected_category].copy()
 
-    work, revenue_available = _prepare_work_df(df, product_col, order_col, qty_col, price_col)
+    try:
+        work, revenue_available = _prepare_work_df(df, product_col, order_col, qty_col, price_col)
+    except Exception:
+        st.error(_txt("preprocessing_failed"))
+        return
     if work.empty:
         st.info(_txt("empty_after_filter"))
         return
 
-    rules_df, item_counter, order_revenue, avg_items, avg_order_value = _compute_rules(work, revenue_available)
+    try:
+        rules_df, item_counter, order_revenue, avg_items, avg_order_value = _compute_rules(work, revenue_available)
+    except Exception:
+        st.error(_txt("rule_compute_failed"))
+        return
     total_orders = int(work["_order_id"].nunique())
     total_products = int(work["_product_name"].nunique())
 
@@ -588,17 +627,26 @@ def render():
     st.markdown("---")
 
     st.subheader(_txt("frequent_combos"))
-    _render_top_combos(rules_df, top_n)
+    try:
+        _render_top_combos(rules_df, top_n)
+    except Exception:
+        st.error(_txt("chart_render_failed"))
 
     st.markdown("---")
 
     st.subheader(_txt("network"))
-    _render_network(rules_df, item_counter, total_orders, top_n)
+    try:
+        _render_network(rules_df, item_counter, total_orders, top_n)
+    except Exception:
+        st.error(_txt("chart_render_failed"))
 
     st.markdown("---")
 
     st.subheader(_txt("contribution"))
-    _render_contribution(rules_df, top_n, revenue_available)
+    try:
+        _render_contribution(rules_df, top_n, revenue_available)
+    except Exception:
+        st.error(_txt("chart_render_failed"))
 
     st.markdown("---")
 
@@ -641,13 +689,19 @@ def render():
         },
     )
 
-    csv_data = display_df.to_csv(index=False).encode("utf-8-sig")
-    st.download_button(
-        _txt("download"),
-        data=csv_data,
-        file_name="market_basket_analysis.csv",
-        mime="text/csv",
-    )
+    try:
+        csv_data = display_df.to_csv(index=False).encode("utf-8-sig")
+    except Exception:
+        csv_data = None
+        st.warning(_txt("export_failed"))
+
+    if csv_data is not None:
+        st.download_button(
+            _txt("download"),
+            data=csv_data,
+            file_name="market_basket_analysis.csv",
+            mime="text/csv",
+        )
 
     insight_items = [
         f"{_txt('total_orders')}: {total_orders:,}",
