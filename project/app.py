@@ -1,4 +1,6 @@
-﻿"""Application entrypoint for the Streamlit retail BI dashboard."""
+"""Application entrypoint for the Streamlit retail BI dashboard."""
+# 代码来源：AI生成 + 学生修改
+# 模块说明：项目模块，负责对应功能实现。
 
 import importlib
 
@@ -210,6 +212,8 @@ NAV_ICONS = {
 }
 
 
+# 函数说明：处理 set_current_page 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def set_current_page(page_key: str) -> None:
     if page_key not in PAGE_KEYS:
         page_key = "home"
@@ -217,6 +221,8 @@ def set_current_page(page_key: str) -> None:
     st.session_state.page_index = PAGE_KEYS.index(page_key)
 
 
+# 函数说明：处理 get_current_page 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def get_current_page() -> str:
     current_page = st.session_state.get("current_page")
     if current_page not in PAGE_KEYS:
@@ -232,6 +238,8 @@ def get_current_page() -> str:
     return current_page
 
 
+# 函数说明：渲染 render_language_switch 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def render_language_switch(translator):
     current_language = st.session_state.get("language", "en")
     cols = st.columns([6, 0.85, 0.85])
@@ -259,6 +267,8 @@ def render_language_switch(translator):
                 st.rerun()
 
 
+# 函数说明：处理 _nav_group_label 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _nav_group_label(group_key: str) -> str:
     label = t(group_key)
     if label == group_key:
@@ -267,6 +277,8 @@ def _nav_group_label(group_key: str) -> str:
     return label
 
 
+# 函数说明：渲染 render_sidebar 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def render_sidebar(current_page: str) -> str:
     st.sidebar.markdown(
         """
@@ -308,6 +320,8 @@ def render_sidebar(current_page: str) -> str:
     return current_page
 
 
+# 函数说明：启动应用主流程。
+# 代码来源：AI生成 + 学生修改
 def main():
     settings = load_settings()
     if "language" not in st.session_state:

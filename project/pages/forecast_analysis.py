@@ -1,8 +1,10 @@
-﻿"""Forecast Analysis page.
+"""Forecast Analysis page.
 
 Aggregates monthly sales and compares Linear Regression and Moving Average
 forecasts for the next six months.
 """
+# 代码来源：AI生成 + 学生修改
+# 模块说明：页面模块，负责对应 Streamlit 页面渲染与交互。
 
 from typing import Optional, Tuple
 
@@ -29,6 +31,8 @@ TEXT = {
     "en": {
         "title": "Forecast Analysis",
         "summary": "Monthly sales trend and six-month sales forecast comparison.",
+        "guide": "Review model notes first, then compare forecast curves and the recommended model.",
+        "computing": "Preparing monthly sales and forecasts...",
         "overview": "Forecast KPI Overview",
         "historical_total": "Historical Total Sales",
         "monthly_average": "Average Monthly Sales",
@@ -66,6 +70,8 @@ TEXT = {
     "zh": {
         "title": "预测分析（Forecast Analysis）",
         "summary": "按月份聚合销售额，并对比未来6个月的线性回归预测与移动平均预测。",
+        "guide": "建议先查看模型说明，再对比预测曲线和推荐模型。",
+        "computing": "正在准备月度销售额和预测结果...",
         "overview": "预测指标概览",
         "historical_total": "历史累计销售额",
         "monthly_average": "月均销售额",
@@ -103,16 +109,22 @@ TEXT = {
 }
 
 
+# 函数说明：处理 _lang 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _lang() -> str:
     lang = str(st.session_state.get("language", "en")).lower()
     return "zh" if lang.startswith("zh") else "en"
 
 
+# 函数说明：处理 _txt 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _txt(key: str, **kwargs) -> str:
     value = TEXT.get(_lang(), TEXT["en"]).get(key, key)
     return value.format(**kwargs) if kwargs else value
 
 
+# 函数说明：查找 _find_column 相关字段或资源。
+# 代码来源：AI生成 + 学生修改
 def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     cols = list(df.columns)
     lower_map = {c.lower(): c for c in cols}
@@ -127,6 +139,8 @@ def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     return None
 
 
+# 函数说明：格式化 _format_money 相关展示数据。
+# 代码来源：AI生成 + 学生修改
 def _format_money(value) -> str:
     try:
         return f"{float(value):,.2f}"
@@ -134,6 +148,8 @@ def _format_money(value) -> str:
         return _txt("not_available")
 
 
+# 函数说明：格式化 _format_percent 相关展示数据。
+# 代码来源：AI生成 + 学生修改
 def _format_percent(value) -> str:
     try:
         return f"{float(value):.1%}"
@@ -141,6 +157,8 @@ def _format_percent(value) -> str:
         return _txt("not_available")
 
 
+# 函数说明：构建 _build_monthly_sales 所需的数据结构或界面内容。
+# 代码来源：AI生成 + 学生修改
 def _build_monthly_sales(df: pd.DataFrame) -> Tuple[pd.DataFrame, Optional[str]]:
     date_col = _find_column(df, ["invoicedate", "invoice date", "date", "orderdate", "order_date", "timestamp"])
     qty_col = _find_column(df, ["quantity", "qty", "units"])
@@ -173,11 +191,15 @@ def _build_monthly_sales(df: pd.DataFrame) -> Tuple[pd.DataFrame, Optional[str]]
     return monthly, None
 
 
+# 函数说明：处理 _future_months 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _future_months(monthly: pd.DataFrame, periods: int = 6) -> pd.DatetimeIndex:
     last_month = monthly["Month"].max()
     return pd.date_range(last_month + pd.offsets.MonthBegin(1), periods=periods, freq="MS")
 
 
+# 函数说明：处理 _forecast_linear_regression 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _forecast_linear_regression(monthly: pd.DataFrame, periods: int = 6) -> pd.DataFrame:
     y = monthly["Sales"].astype(float).values
     x = np.arange(len(monthly)).reshape(-1, 1)
@@ -199,6 +221,8 @@ def _forecast_linear_regression(monthly: pd.DataFrame, periods: int = 6) -> pd.D
     )
 
 
+# 函数说明：处理 _forecast_moving_average 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _forecast_moving_average(monthly: pd.DataFrame, periods: int = 6, window: int = 3) -> pd.DataFrame:
     history = monthly["Sales"].astype(float).tolist()
     values = []
@@ -217,17 +241,23 @@ def _forecast_moving_average(monthly: pd.DataFrame, periods: int = 6, window: in
     )
 
 
+# 函数说明：构建 _build_forecasts 所需的数据结构或界面内容。
+# 代码来源：AI生成 + 学生修改
 def _build_forecasts(monthly: pd.DataFrame) -> pd.DataFrame:
     linear = _forecast_linear_regression(monthly)
     moving = _forecast_moving_average(monthly)
     return linear.merge(moving, on="Month", how="inner")
 
 
+# 函数说明：处理 _moving_average_predict_from_history 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _moving_average_predict_from_history(history, window: int = 3) -> float:
     current_window = history[-window:] if len(history) >= window else history
     return float(np.mean(current_window)) if current_window else 0.0
 
 
+# 函数说明：处理 _backtest_recommendation 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _backtest_recommendation(monthly: pd.DataFrame) -> Tuple[str, str]:
     if len(monthly) < 6:
         return "Moving Average", _txt("recommend_moving")
@@ -254,6 +284,8 @@ def _backtest_recommendation(monthly: pd.DataFrame) -> Tuple[str, str]:
     return "Moving Average", _txt("recommend_moving")
 
 
+# 函数说明：处理 _line_chart 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _line_chart(title: str, x, y, name: str, color: str, dash: Optional[str] = None):
     if go is None:
         st.info(_txt("plotly_missing"))
@@ -282,6 +314,8 @@ def _line_chart(title: str, x, y, name: str, color: str, dash: Optional[str] = N
     st.plotly_chart(fig, use_container_width=True)
 
 
+# 函数说明：处理 _forecast_comparison_chart 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _forecast_comparison_chart(forecast: pd.DataFrame):
     if go is None:
         st.info(_txt("plotly_missing"))
@@ -321,6 +355,8 @@ def _forecast_comparison_chart(forecast: pd.DataFrame):
     st.plotly_chart(fig, use_container_width=True)
 
 
+# 函数说明：处理 _combined_chart 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _combined_chart(monthly: pd.DataFrame, forecast: pd.DataFrame):
     if go is None:
         st.info(_txt("plotly_missing"))
@@ -371,6 +407,8 @@ def _combined_chart(monthly: pd.DataFrame, forecast: pd.DataFrame):
     st.plotly_chart(fig, use_container_width=True)
 
 
+# 函数说明：处理 _business_interpretation 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _business_interpretation(forecast: pd.DataFrame, model_name: str, forecast_total: float, growth_rate: float) -> str:
     first_value = float(forecast[model_name].iloc[0])
     last_value = float(forecast[model_name].iloc[-1])
@@ -383,9 +421,12 @@ def _business_interpretation(forecast: pd.DataFrame, model_name: str, forecast_t
     return _txt(key, total=_format_money(forecast_total), growth=_format_percent(growth_rate))
 
 
+# 函数说明：渲染当前页面或组件。
+# 代码来源：AI生成 + 学生修改
 def render():
     st.title(_txt("title"))
     st.write(_txt("summary"))
+    st.caption(_txt("guide"))
 
     cur = data_manager.get_current_dataset()
     if not cur:
@@ -397,18 +438,22 @@ def render():
         st.info(_txt("no_dataset"))
         return
 
-    monthly, error_message = _build_monthly_sales(df)
+    # Build monthly series and model outputs together so the UI shows one clear loading state.
+    with st.spinner(_txt("computing")):
+        monthly, error_message = _build_monthly_sales(df)
+        if not error_message:
+            monthly = monthly[monthly["Sales"].notna()].copy()
+            forecast = _build_forecasts(monthly) if len(monthly) >= 2 else pd.DataFrame()
+            recommended_model, recommend_reason = (
+                _backtest_recommendation(monthly) if len(monthly) >= 2 else (None, None)
+            )
     if error_message:
         st.warning(error_message)
         return
 
-    monthly = monthly[monthly["Sales"].notna()].copy()
     if len(monthly) < 2:
         st.info(_txt("not_enough_data"))
         return
-
-    forecast = _build_forecasts(monthly)
-    recommended_model, recommend_reason = _backtest_recommendation(monthly)
 
     historical_total = float(monthly["Sales"].sum())
     monthly_average = float(monthly["Sales"].mean())

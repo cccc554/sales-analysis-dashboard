@@ -1,4 +1,6 @@
-﻿"""About page for the e-commerce retail analytics platform."""
+"""About page for the e-commerce retail analytics platform."""
+# 代码来源：AI生成 + 学生修改
+# 模块说明：页面模块，负责对应 Streamlit 页面渲染与交互。
 
 import streamlit as st
 
@@ -82,6 +84,8 @@ ABOUT_CSS = """
 """
 
 
+# 函数说明：处理 _card 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _card(title: str, body: str):
     st.markdown(
         f"""
@@ -94,10 +98,14 @@ def _card(title: str, body: str):
     )
 
 
+# 函数说明：处理 _pill_list 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _pill_list(items):
     return "".join(f'<span class="about-pill">{item}</span>' for item in items)
 
 
+# 函数说明：渲染当前页面或组件。
+# 代码来源：AI生成 + 学生修改
 def render():
     st.markdown(ABOUT_CSS, unsafe_allow_html=True)
     st.markdown(

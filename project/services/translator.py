@@ -1,5 +1,7 @@
 """翻译服务。
 负责中英双语文本字典、语言切换和页面翻译入口。"""
+# 代码来源：AI生成 + 学生修改
+# 模块说明：服务模块，负责数据、模型或通用业务能力封装。
 
 import streamlit as st
 
@@ -52,13 +54,14 @@ translations = {
         "describe_stats": "统计摘要",
         "load_label": "加载",
         "upload_error": "上传文件读取失败。",
-        "invalid_file_format": "文件格式不支持，请上传 CSV、XLS 或 XLSX 文件。",
-        "upload_parse_failed": "数据解析失败，请检查文件内容、编码或表头格式。",
-        "empty_dataset": "数据集为空，请上传包含有效行和列的数据文件。",
+        "invalid_file_format": "文件格式不支持，当前仅支持 .csv/.xls/.xlsx 文件。",
+        "upload_parse_failed": "文件解析出错，请检查文件内容格式。",
+        "upload_encoding_failed": "文件编码异常，建议使用 utf-8 或 GBK 格式。",
+        "empty_dataset": "文件数据为空，请更换有效数据文件。",
         "dataset_save_error": "数据保存到会话失败，请检查数据列名或文件内容后重试。",
         "current_dataset_label": "当前数据集",
         "no_dataset_loaded": "当前未加载任何数据集。",
-        "empty_file": "空文件，无法读取。",
+        "empty_file": "文件数据为空，请更换有效数据文件。",
         "duplicate_columns": "重复列名",
         "all_empty_columns": "全空列",
         "file_size": "文件大小 (bytes)",
@@ -340,13 +343,14 @@ translations = {
         "describe_stats": "Statistical summary",
         "load_label": "Load",
         "upload_error": "Failed to read uploaded file.",
-        "invalid_file_format": "Unsupported file format. Please upload a CSV, XLS, or XLSX file.",
-        "upload_parse_failed": "Failed to parse the dataset. Please check the file content, encoding, or header row.",
-        "empty_dataset": "The dataset is empty. Please upload a file with valid rows and columns.",
+        "invalid_file_format": "Unsupported file format. Only .csv/.xls/.xlsx files are supported.",
+        "upload_parse_failed": "File parsing failed. Please check the file content format.",
+        "upload_encoding_failed": "File encoding looks invalid. Please use utf-8 or GBK encoding.",
+        "empty_dataset": "The file data is empty. Please choose a valid data file.",
         "dataset_save_error": "Failed to save the dataset to the session. Please check the column names or file content and try again.",
         "current_dataset_label": "Current dataset",
         "no_dataset_loaded": "No dataset loaded.",
-        "empty_file": "Empty file, cannot read.",
+        "empty_file": "The file data is empty. Please choose a valid data file.",
         "duplicate_columns": "Duplicate column names",
         "all_empty_columns": "All-empty columns",
         "file_size": "File size (bytes)",
@@ -584,12 +588,16 @@ translations = {
 }
 
 
+# 类说明：封装 Translator 相关状态与行为。
+# 代码来源：AI生成 + 学生修改
 class Translator:
     def __init__(self, language=None):
         if "language" not in st.session_state:
             st.session_state.language = "en"
         self.language = language or st.session_state.language
 
+    # 函数说明：处理 t 相关逻辑。
+    # 代码来源：AI生成 + 学生修改
     def t(self, key):
         return translations.get(self.language, {}).get(key, key)
 
@@ -598,6 +606,8 @@ class Translator:
         self.language = language
 
 
+# 函数说明：处理 t 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def t(key):
     translator = Translator()
     return translator.t(key)

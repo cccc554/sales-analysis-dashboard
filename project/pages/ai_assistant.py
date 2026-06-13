@@ -1,4 +1,6 @@
-﻿"""AI data analysis assistant page."""
+"""AI data analysis assistant page."""
+# 代码来源：AI生成 + 学生修改
+# 模块说明：页面模块，负责对应 Streamlit 页面渲染与交互。
 
 from collections import Counter
 from itertools import combinations
@@ -26,6 +28,9 @@ AI_PANEL_TEXT = {
     "zh": {
         "connected": "✅ 已连接 Qwen",
         "not_connected": "❌ 未连接",
+        "guide": "可点击快捷问题，或在底部输入具体业务问题；如已配置 Qwen，将优先使用 AI 生成回答。",
+        "context_loading": "正在读取当前数据集上下文...",
+        "answer_loading": "正在生成回答...",
         "model_label": "模型选择",
         "temperature_help": (
             "Temperature（温度）用于控制回答的创造性和随机性。\n\n"
@@ -54,6 +59,9 @@ AI_PANEL_TEXT = {
     "en": {
         "connected": "Connected",
         "not_connected": "Not Connected",
+        "guide": "Click a quick question or type a business question below. Qwen is used first when configured.",
+        "context_loading": "Reading the current dataset context...",
+        "answer_loading": "Generating answer...",
         "model_label": "Model",
         "temperature_help": (
             "Temperature controls creativity and randomness.\n\n"
@@ -140,14 +148,20 @@ AI_CSS = """
 """
 
 
+# 函数说明：处理 _panel_language 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _panel_language() -> str:
     return "zh" if str(st.session_state.get("language", "en")).startswith("zh") else "en"
 
 
+# 函数说明：处理 _panel_text 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _panel_text(key: str):
     return AI_PANEL_TEXT[_panel_language()][key]
 
 
+# 函数说明：查找 _find_column 相关字段或资源。
+# 代码来源：AI生成 + 学生修改
 def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     cols = list(df.columns)
     lower_map = {c.lower(): c for c in cols}
@@ -162,11 +176,15 @@ def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     return None
 
 
+# 函数说明：清洗 _clean_text 对应的输入文本或数据。
+# 代码来源：AI生成 + 学生修改
 def _clean_text(value) -> str:
     text = str(value).strip()
     return text if text and text.lower() != "nan" else ""
 
 
+# 函数说明：处理 _fmt_money 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _fmt_money(value) -> str:
     try:
         return f"{float(value):,.2f}"
@@ -174,6 +192,8 @@ def _fmt_money(value) -> str:
         return t("not_available")
 
 
+# 函数说明：处理 _fmt_number 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _fmt_number(value) -> str:
     try:
         return f"{float(value):,.0f}"
@@ -181,6 +201,8 @@ def _fmt_number(value) -> str:
         return t("not_available")
 
 
+# 函数说明：处理 _fmt_pct 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _fmt_pct(value) -> str:
     try:
         return f"{float(value):.1%}"
@@ -188,6 +210,8 @@ def _fmt_pct(value) -> str:
         return t("not_available")
 
 
+# 函数说明：构建 _build_context 所需的数据结构或界面内容。
+# 代码来源：AI生成 + 学生修改
 def _build_context(cur):
     df = cur.get("df")
     work = df.copy()
@@ -242,6 +266,8 @@ def _build_context(cur):
     }
 
 
+# 函数说明：处理 _answer_top_product 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _answer_top_product(ctx) -> str:
     df = ctx["df"]
     if not ctx["product_col"] or df["_product_name"].eq("").all():
@@ -268,6 +294,8 @@ def _answer_top_product(ctx) -> str:
     )
 
 
+# 函数说明：处理 _answer_customer_contribution 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _answer_customer_contribution(ctx) -> str:
     df = ctx["df"]
     customer_col = ctx["customer_col"]
@@ -299,6 +327,8 @@ def _answer_customer_contribution(ctx) -> str:
     )
 
 
+# 函数说明：处理 _answer_recent_trend 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _answer_recent_trend(ctx) -> str:
     df = ctx["df"]
     if not ctx["date_col"]:
@@ -336,6 +366,8 @@ def _answer_recent_trend(ctx) -> str:
     return "\n".join(lines)
 
 
+# 函数说明：处理 _answer_bundles 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _answer_bundles(ctx) -> str:
     df = ctx["df"]
     if not ctx["product_col"] or not ctx["order_col"]:
@@ -370,6 +402,8 @@ def _answer_bundles(ctx) -> str:
     return "\n".join(lines)
 
 
+# 函数说明：处理 _answer_advice 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _answer_advice(ctx) -> str:
     top_product = _answer_top_product(ctx)
     trend = _answer_recent_trend(ctx)
@@ -384,6 +418,8 @@ def _answer_advice(ctx) -> str:
     )
 
 
+# 函数说明：处理 _answer_overview 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _answer_overview(ctx) -> str:
     return t("ai_overview_answer").format(
         dataset=ctx["dataset_name"],
@@ -394,6 +430,8 @@ def _answer_overview(ctx) -> str:
     )
 
 
+# 函数说明：生成 _generate_answer 对应的文本或结果。
+# 代码来源：AI生成 + 学生修改
 def _generate_answer(question: str, ctx) -> str:
     q = question.lower()
     if ("产品" in question and ("最高" in question or "top" in q or "销售额" in question)) or "product" in q:
@@ -409,6 +447,8 @@ def _generate_answer(question: str, ctx) -> str:
     return _answer_overview(ctx)
 
 
+# 函数说明：构建 _build_llm_prompt 所需的数据结构或界面内容。
+# 代码来源：AI生成 + 学生修改
 def _build_llm_prompt(question: str, ctx, rule_answer: str, model_config: dict) -> str:
     language = "Chinese" if str(st.session_state.get("language", "en")).startswith("zh") else "English"
     style_instruction = model_config.get("style_instruction", "")
@@ -440,6 +480,8 @@ def _build_llm_prompt(question: str, ctx, rule_answer: str, model_config: dict) 
     )
 
 
+# 函数说明：生成 _generate_llm_answer 对应的文本或结果。
+# 代码来源：AI生成 + 学生修改
 def _generate_llm_answer(question: str, ctx, rule_answer: str, model_config: dict) -> str:
     if model_config.get("provider") != "Qwen":
         return rule_answer
@@ -459,10 +501,14 @@ def _generate_llm_answer(question: str, ctx, rule_answer: str, model_config: dic
         return t("ai_qwen_error").format(error=str(exc), fallback=rule_answer)
 
 
+# 函数说明：处理 _append_message 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _append_message(role: str, content: str):
     st.session_state.ai_assistant_messages.append({"role": role, "content": content})
 
 
+# 函数说明：渲染 _render_model_config 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def _render_model_config():
     st.markdown(
         f"""
@@ -526,6 +572,8 @@ def _render_model_config():
     }
 
 
+# 函数说明：渲染当前页面或组件。
+# 代码来源：AI生成 + 学生修改
 def render():
     st.markdown(AI_CSS, unsafe_allow_html=True)
     st.markdown(
@@ -537,6 +585,7 @@ def render():
         """,
         unsafe_allow_html=True,
     )
+    st.caption(_panel_text("guide"))
 
     cur = data_manager.get_current_dataset()
     left, right = st.columns([2.2, 1])
@@ -549,7 +598,9 @@ def render():
             st.info(t("ai_no_dataset_hint"))
             return
 
-        ctx = _build_context(cur)
+        # Build the reusable dataset context before answering questions.
+        with st.spinner(_panel_text("context_loading")):
+            ctx = _build_context(cur)
 
         k1, k2, k3, k4 = st.columns(4)
         k1.metric(t("ai_kpi_dataset_name"), ctx["dataset_name"])
@@ -584,6 +635,7 @@ def render():
 
         if question:
             _append_message("user", question)
-            rule_answer = _generate_answer(question, ctx)
-            _append_message("assistant", _generate_llm_answer(question, ctx, rule_answer, model_config))
+            with st.spinner(_panel_text("answer_loading")):
+                rule_answer = _generate_answer(question, ctx)
+                _append_message("assistant", _generate_llm_answer(question, ctx, rule_answer, model_config))
             st.rerun()

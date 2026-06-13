@@ -1,4 +1,6 @@
 """Basic chart helpers with shared dashboard theming."""
+# 代码来源：AI生成
+# 模块说明：可视化模块，负责图表样式与构建。
 
 from config.theme import ACCENT, PRIMARY, PRIMARY_FILL, SUCCESS, WARNING, apply_plotly_theme
 
@@ -6,6 +8,8 @@ from config.theme import ACCENT, PRIMARY, PRIMARY_FILL, SUCCESS, WARNING, apply_
 RFM_COLORS = [PRIMARY, ACCENT, SUCCESS, WARNING]
 
 
+# 函数说明：处理 apply_theme 相关逻辑。
+# 代码来源：AI生成
 def apply_theme(chart, height=None):
     """Apply the global theme to a Plotly figure-like object."""
     if hasattr(chart, "update_layout"):
@@ -13,6 +17,8 @@ def apply_theme(chart, height=None):
     return chart
 
 
+# 函数说明：处理 style_top_product_ranking 相关逻辑。
+# 代码来源：AI生成
 def style_top_product_ranking(fig, top_count=None):
     """Style a top product bar chart with the accent business color."""
     if fig is None:
@@ -21,6 +27,8 @@ def style_top_product_ranking(fig, top_count=None):
     return apply_plotly_theme(fig)
 
 
+# 函数说明：处理 style_rfm_scatter 相关逻辑。
+# 代码来源：AI生成
 def style_rfm_scatter(fig):
     """Style an RFM scatter chart using the four business palette colors."""
     if fig is None:
@@ -30,6 +38,8 @@ def style_rfm_scatter(fig):
     return apply_plotly_theme(fig)
 
 
+# 函数说明：处理 style_sales_trend 相关逻辑。
+# 代码来源：AI生成
 def style_sales_trend(fig):
     """Style a sales trend line chart with primary line and soft fill."""
     if fig is None:
@@ -43,6 +53,8 @@ def style_sales_trend(fig):
     return apply_plotly_theme(fig)
 
 
+# 函数说明：构建 build_basic_chart 所需的数据结构或界面内容。
+# 代码来源：AI生成
 def build_basic_chart(config):
     """Return the basic chart payload with theme applied when possible."""
     if isinstance(config, dict):

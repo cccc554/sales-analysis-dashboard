@@ -1,8 +1,10 @@
-﻿"""Market Basket Analysis page.
+"""Market Basket Analysis page.
 
 Builds basket KPIs, frequent item combinations, a rule network, contribution
 charts, and a downloadable association table from the current dataset.
 """
+# 代码来源：AI生成 + 学生修改
+# 模块说明：页面模块，负责对应 Streamlit 页面渲染与交互。
 
 from collections import Counter, defaultdict
 from itertools import combinations
@@ -33,6 +35,8 @@ ANALYSIS_CACHE_TTL_SECONDS = 1800
 TEXT = {
     "en": {
         "page_summary": "Discover frequently purchased product combinations and association rules.",
+        "guide": "Use filters to focus the basket scope, then review combinations, network links, and exportable rules.",
+        "computing": "Calculating basket combinations and association rules...",
         "controls": "Basket Controls",
         "top_n": "Top N",
         "date_range": "Date Range",
@@ -81,6 +85,8 @@ TEXT = {
     },
     "zh": {
         "page_summary": "发现高频同购商品组合和商品关联规则。",
+        "guide": "可先用筛选器缩小篮子范围，再查看组合排行、关系网络和可导出的规则表。",
+        "computing": "正在计算商品组合和关联规则...",
         "controls": "篮子分析控制",
         "top_n": "Top N",
         "date_range": "日期范围",
@@ -130,16 +136,22 @@ TEXT = {
 }
 
 
+# 函数说明：处理 _lang 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _lang() -> str:
     lang = str(st.session_state.get("language", "en")).lower()
     return "zh" if lang.startswith("zh") else "en"
 
 
+# 函数说明：处理 _txt 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _txt(key: str, **kwargs) -> str:
     value = TEXT.get(_lang(), TEXT["en"]).get(key, key)
     return value.format(**kwargs) if kwargs else value
 
 
+# 函数说明：查找 _find_column 相关字段或资源。
+# 代码来源：AI生成 + 学生修改
 def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     cols = list(df.columns)
     lower_map = {c.lower(): c for c in cols}
@@ -154,26 +166,36 @@ def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     return None
 
 
+# 函数说明：清洗 _clean_text 对应的输入文本或数据。
+# 代码来源：AI生成 + 学生修改
 def _clean_text(value) -> str:
     text = str(value).strip()
     return text if text and text.lower() != "nan" else ""
 
 
+# 函数说明：处理 _shorten 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _shorten(value: str, max_len: int = 36) -> str:
     value = str(value)
     return value if len(value) <= max_len else value[: max_len - 1] + "..."
 
 
+# 函数说明：处理 _combo_name 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _combo_name(items) -> str:
     return " + ".join(str(item) for item in items)
 
 
+# 函数说明：处理 _combo_display 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _combo_display(items, max_items: int = 3) -> str:
     shown = [_shorten(item) for item in list(items)[:max_items]]
     suffix = "" if len(items) <= max_items else " + ..."
     return " + ".join(shown) + suffix
 
 
+# 函数说明：格式化 _format_number 相关展示数据。
+# 代码来源：AI生成 + 学生修改
 def _format_number(value) -> str:
     try:
         return f"{float(value):,.0f}"
@@ -181,6 +203,8 @@ def _format_number(value) -> str:
         return _txt("not_available")
 
 
+# 函数说明：格式化 _format_money 相关展示数据。
+# 代码来源：AI生成 + 学生修改
 def _format_money(value) -> str:
     try:
         return f"{float(value):,.2f}"
@@ -188,12 +212,16 @@ def _format_money(value) -> str:
         return _txt("not_available")
 
 
+# 函数说明：处理 _accent_edge_color 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _accent_edge_color(value: float, max_value: float) -> str:
     ratio = 0.0 if max_value <= 0 else min(max(float(value) / max_value, 0.0), 1.0)
     alpha = 0.28 + ratio * 0.54
     return f"rgba(162, 59, 114, {alpha:.2f})"
 
 
+# 函数说明：处理 _prepare_work_df 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 @st.cache_data(ttl=ANALYSIS_CACHE_TTL_SECONDS, show_spinner=False)
 def _prepare_work_df(df: pd.DataFrame, product_col: str, order_col: str, qty_col: Optional[str], price_col: Optional[str]):
     work = df.copy()
@@ -212,6 +240,8 @@ def _prepare_work_df(df: pd.DataFrame, product_col: str, order_col: str, qty_col
     return work, revenue_available
 
 
+# 函数说明：计算 _compute_rules 对应的业务指标。
+# 代码来源：AI生成 + 学生修改
 @st.cache_data(ttl=ANALYSIS_CACHE_TTL_SECONDS, show_spinner=False)
 def _compute_rules(work: pd.DataFrame, revenue_available: bool):
     total_orders = int(work["_order_id"].nunique())
@@ -294,6 +324,8 @@ def _compute_rules(work: pd.DataFrame, revenue_available: bool):
     return rules_df, item_counter, order_revenue, avg_items, avg_order_value
 
 
+# 函数说明：渲染 _render_top_combos 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def _render_top_combos(rules_df: pd.DataFrame, top_n: int):
     if px is None:
         st.info(_txt("plotly_missing"))
@@ -323,6 +355,8 @@ def _render_top_combos(rules_df: pd.DataFrame, top_n: int):
     st.plotly_chart(fig, use_container_width=True)
 
 
+# 函数说明：渲染 _render_network 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def _render_network(rules_df: pd.DataFrame, item_counter: Counter, total_orders: int, top_n: int):
     if go is None:
         st.info(_txt("plotly_missing"))
@@ -413,6 +447,8 @@ def _render_network(rules_df: pd.DataFrame, item_counter: Counter, total_orders:
     st.plotly_chart(fig, use_container_width=True)
 
 
+# 函数说明：渲染 _render_contribution 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: bool):
     if px is None:
         st.info(_txt("plotly_missing"))
@@ -431,6 +467,8 @@ def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: 
 
     total_sales = float(chart_df["item_sales"].sum()) if use_revenue else 0.0
 
+    # 函数说明：处理 _sales_share_pct 相关逻辑。
+    # 代码来源：AI生成 + 学生修改
     def _sales_share_pct(item_sales) -> float:
         if total_sales <= 0:
             return 0.0
@@ -515,9 +553,12 @@ def _render_contribution(rules_df: pd.DataFrame, top_n: int, revenue_available: 
     st.markdown("</div>", unsafe_allow_html=True)
 
 
+# 函数说明：渲染当前页面或组件。
+# 代码来源：AI生成 + 学生修改
 def render():
     st.title(t("market_basket_analysis"))
     st.write(_txt("page_summary"))
+    st.caption(_txt("guide"))
 
     cur = data_manager.get_current_dataset()
     if not cur:
@@ -594,7 +635,9 @@ def render():
                 df = df[df[category_col].astype(str) == selected_category].copy()
 
     try:
-        work, revenue_available = _prepare_work_df(df, product_col, order_col, qty_col, price_col)
+        # Prepare cleaned baskets before rule calculation.
+        with st.spinner(_txt("computing")):
+            work, revenue_available = _prepare_work_df(df, product_col, order_col, qty_col, price_col)
     except Exception:
         st.error(_txt("preprocessing_failed"))
         return
@@ -603,7 +646,8 @@ def render():
         return
 
     try:
-        rules_df, item_counter, order_revenue, avg_items, avg_order_value = _compute_rules(work, revenue_available)
+        with st.spinner(_txt("computing")):
+            rules_df, item_counter, order_revenue, avg_items, avg_order_value = _compute_rules(work, revenue_available)
     except Exception:
         st.error(_txt("rule_compute_failed"))
         return

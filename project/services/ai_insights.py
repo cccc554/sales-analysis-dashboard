@@ -1,4 +1,6 @@
 """Reusable AI insight panel for analysis pages."""
+# 代码来源：AI生成 + 学生修改
+# 模块说明：服务模块，负责数据、模型或通用业务能力封装。
 
 import hashlib
 
@@ -15,6 +17,7 @@ TEXT = {
         "fallback_intro": "基于当前页面数据，主要结论如下：",
         "fallback_advice": "建议：优先关注异常变化、头部贡献项和可直接落地的运营动作。",
         "prompt_language": "Chinese",
+        "loading": "AI 正在生成洞察，请稍候...",
         "style_defaults": {
             "专业分析": "Use a professional data analysis style with clear conclusions and supporting metrics.",
             "管理层汇报": "Use an executive reporting style. Prioritize business impact, concise conclusions, and action items.",
@@ -28,6 +31,7 @@ TEXT = {
         "fallback_intro": "Based on the current page data, the main conclusions are:",
         "fallback_advice": "Recommendation: prioritize unusual changes, leading contribution items, and practical operational actions.",
         "prompt_language": "English",
+        "loading": "AI is generating insights. Please wait...",
         "style_defaults": {
             "Professional Analysis": "Use a professional analysis style with clear conclusions and supporting metrics.",
             "Executive Report": "Use an executive reporting style. Prioritize business impact, concise conclusions, and action items.",
@@ -39,15 +43,21 @@ TEXT = {
 }
 
 
+# 函数说明：处理 _lang 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _lang() -> str:
     language = str(st.session_state.get("language", "en")).lower()
     return "zh" if language.startswith("zh") else "en"
 
 
+# 函数说明：处理 _text 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _text(key: str):
     return TEXT[_lang()][key]
 
 
+# 函数说明：处理 _current_ai_config 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _current_ai_config():
     language = _lang()
     model = st.session_state.get("ai_model_select") or st.session_state.get("ai_model_name") or "qwen-plus"
@@ -70,10 +80,14 @@ def _current_ai_config():
     }
 
 
+# 函数说明：处理 _normalize_summary 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _normalize_summary(summary_items) -> list[str]:
     return [str(item).strip() for item in summary_items if str(item).strip()]
 
 
+# 函数说明：处理 _local_insight 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _local_insight(summary_items: list[str]) -> str:
     lines = [_text("fallback_intro"), ""]
     lines.extend(f"- {item}" for item in summary_items)
@@ -81,6 +95,8 @@ def _local_insight(summary_items: list[str]) -> str:
     return "\n".join(lines)
 
 
+# 函数说明：构建 _build_prompt 所需的数据结构或界面内容。
+# 代码来源：AI生成 + 学生修改
 def _build_prompt(page_title: str, summary_items: list[str], fallback: str, config: dict) -> str:
     summary_text = "\n".join(f"- {item}" for item in summary_items)
     return "\n".join(
@@ -101,6 +117,8 @@ def _build_prompt(page_title: str, summary_items: list[str], fallback: str, conf
     )
 
 
+# 函数说明：处理 _cache_key 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _cache_key(page_id: str, page_title: str, summary_items: list[str], config: dict, has_api_key: bool) -> str:
     payload = "|".join(
         [
@@ -118,6 +136,8 @@ def _cache_key(page_id: str, page_title: str, summary_items: list[str], config: 
     return f"ai_insight_{page_id}_{digest}"
 
 
+# 函数说明：渲染 render_ai_insights 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def render_ai_insights(page_id: str, page_title: str, summary_items) -> None:
     normalized_summary = _normalize_summary(summary_items)
     if not normalized_summary:
@@ -137,7 +157,9 @@ def render_ai_insights(page_id: str, page_title: str, summary_items) -> None:
                     model=config["model"],
                     temperature=config["temperature"],
                 )
-                insight = service.generate(_build_prompt(page_title, normalized_summary, fallback, config))
+                # Show progress only for a real remote AI request.
+                with st.spinner(_text("loading")):
+                    insight = service.generate(_build_prompt(page_title, normalized_summary, fallback, config))
             except Exception:
                 insight = fallback
         st.session_state[cache_key] = insight

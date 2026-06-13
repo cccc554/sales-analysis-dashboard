@@ -1,8 +1,10 @@
-﻿"""Product Analysis page.
+"""Product Analysis page.
 
 Builds product-level KPIs, rankings, trends, contribution charts, and a
 downloadable product summary table from the currently loaded dataset.
 """
+# 代码来源：AI生成 + 学生修改
+# 模块说明：页面模块，负责对应 Streamlit 页面渲染与交互。
 
 from typing import Optional
 
@@ -23,6 +25,8 @@ from config.theme import ACCENT, BLUE_GRADIENT, CHART_COLORS, PRIMARY, apply_plo
 TEXT = {
     "en": {
         "page_summary": "Analyze product performance, revenue concentration, and product-level trends.",
+        "guide": "Use the sidebar filters to narrow the period or category, then search products in the detail table.",
+        "computing": "Calculating product metrics...",
         "controls": "Product Controls",
         "top_n": "Top N",
         "date_range": "Date Range",
@@ -67,6 +71,8 @@ TEXT = {
     },
     "zh": {
         "page_summary": "分析产品绩效、收入集中度和单品销售趋势。",
+        "guide": "可在侧边栏筛选日期或类别，并在明细表中搜索具体产品。",
+        "computing": "正在计算产品指标...",
         "controls": "产品分析控制",
         "top_n": "Top N",
         "date_range": "日期范围",
@@ -112,16 +118,22 @@ TEXT = {
 }
 
 
+# 函数说明：处理 _lang 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _lang() -> str:
     lang = str(st.session_state.get("language", "en")).lower()
     return "zh" if lang.startswith("zh") else "en"
 
 
+# 函数说明：处理 _txt 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _txt(key: str, **kwargs) -> str:
     value = TEXT.get(_lang(), TEXT["en"]).get(key, key)
     return value.format(**kwargs) if kwargs else value
 
 
+# 函数说明：查找 _find_column 相关字段或资源。
+# 代码来源：AI生成 + 学生修改
 def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     cols = list(df.columns)
     lower_map = {c.lower(): c for c in cols}
@@ -136,6 +148,8 @@ def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     return None
 
 
+# 函数说明：格式化 _format_number 相关展示数据。
+# 代码来源：AI生成 + 学生修改
 def _format_number(value) -> str:
     try:
         return f"{float(value):,.0f}"
@@ -143,6 +157,8 @@ def _format_number(value) -> str:
         return _txt("not_available")
 
 
+# 函数说明：格式化 _format_money 相关展示数据。
+# 代码来源：AI生成 + 学生修改
 def _format_money(value) -> str:
     try:
         return f"{float(value):,.2f}"
@@ -150,11 +166,15 @@ def _format_money(value) -> str:
         return _txt("not_available")
 
 
+# 函数说明：清洗 _clean_product_name 对应的输入文本或数据。
+# 代码来源：AI生成 + 学生修改
 def _clean_product_name(value) -> str:
     text = str(value).strip()
     return text if text and text.lower() != "nan" else ""
 
 
+# 函数说明：处理 _wrap_label 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _wrap_label(value, line_length: int = 18, max_lines: int = 3) -> str:
     text = str(value).strip()
     if len(text) <= line_length:
@@ -166,11 +186,15 @@ def _wrap_label(value, line_length: int = 18, max_lines: int = 3) -> str:
     return "<br>".join(lines)
 
 
+# 函数说明：处理 _positive_chart_df 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _positive_chart_df(product_summary: pd.DataFrame, top_n: int) -> pd.DataFrame:
     chart_df = product_summary[product_summary["revenue"] > 0].copy()
     return chart_df.sort_values("revenue", ascending=False).head(top_n)
 
 
+# 函数说明：处理 _bar_chart 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _bar_chart(data: pd.DataFrame, x_col: str, title: str, x_label: str):
     if px is None:
         st.info(_txt("plotly_missing"))
@@ -202,6 +226,8 @@ def _bar_chart(data: pd.DataFrame, x_col: str, title: str, x_label: str):
     st.plotly_chart(fig, use_container_width=True)
 
 
+# 函数说明：构建 _build_product_summary 所需的数据结构或界面内容。
+# 代码来源：AI生成 + 学生修改
 def _build_product_summary(df: pd.DataFrame, product_col: str, qty_col: str, price_col: str, order_col: Optional[str]) -> pd.DataFrame:
     work = df.copy()
     work["_product_name"] = work[product_col].map(_clean_product_name)
@@ -239,9 +265,12 @@ def _build_product_summary(df: pd.DataFrame, product_col: str, qty_col: str, pri
     return summary.sort_values("revenue", ascending=False)
 
 
+# 函数说明：渲染当前页面或组件。
+# 代码来源：AI生成 + 学生修改
 def render():
     st.title(t("product_analysis"))
     st.write(_txt("page_summary"))
+    st.caption(_txt("guide"))
 
     cur = data_manager.get_current_dataset()
     if not cur:
@@ -306,7 +335,9 @@ def render():
             if selected_category != _txt("all_categories"):
                 df = df[df[category_col].astype(str) == selected_category].copy()
 
-    product_summary = _build_product_summary(df, product_col, qty_col, price_col, order_col)
+    # Main aggregation can be expensive on larger uploaded datasets.
+    with st.spinner(_txt("computing")):
+        product_summary = _build_product_summary(df, product_col, qty_col, price_col, order_col)
     if product_summary.empty:
         st.info(_txt("empty_after_filter"))
         return

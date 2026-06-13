@@ -1,4 +1,6 @@
-﻿"""Home dashboard page for the e-commerce retail analytics platform."""
+"""Home dashboard page for the e-commerce retail analytics platform."""
+# 代码来源：AI生成 + 学生修改
+# 模块说明：页面模块，负责对应 Streamlit 页面渲染与交互。
 
 from html import escape
 from typing import Optional
@@ -189,6 +191,8 @@ HOME_TEXT = {
         "missing_dataset_prompt": "⚠️ 当前首页没有数据，请先上传数据。",
         "go_dataset_center_upload": "前往数据中心上传",
         "records": "记录数",
+        "guide": "从首页查看整体经营状态，再进入下方模块做专题分析。",
+        "computing": "正在计算首页指标...",
     },
     "en": {
         "core_analytics": "Core Analytics",
@@ -205,16 +209,22 @@ HOME_TEXT = {
         "missing_dataset_prompt": "No data is available on the home page. Please upload data first.",
         "go_dataset_center_upload": "Go to Dataset Center",
         "records": "Records",
+        "guide": "Use this dashboard for a quick health check, then open the modules below for deeper analysis.",
+        "computing": "Calculating home dashboard metrics...",
     },
 }
 
 
+# 函数说明：处理 _txt 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _txt(key: str) -> str:
     language = st.session_state.get("language", "en")
     bundle = HOME_TEXT["zh"] if str(language).lower().startswith("zh") else HOME_TEXT["en"]
     return bundle.get(key, key)
 
 
+# 函数说明：查找 _find_column 相关字段或资源。
+# 代码来源：AI生成 + 学生修改
 def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     cols = list(df.columns)
     lower_map = {c.lower(): c for c in cols}
@@ -229,6 +239,8 @@ def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     return None
 
 
+# 函数说明：格式化 _format_money 相关展示数据。
+# 代码来源：AI生成 + 学生修改
 def _format_money(value) -> str:
     try:
         return f"{float(value):,.2f}"
@@ -236,6 +248,8 @@ def _format_money(value) -> str:
         return t("not_available")
 
 
+# 函数说明：格式化 _format_count 相关展示数据。
+# 代码来源：AI生成 + 学生修改
 def _format_count(value) -> str:
     try:
         return f"{int(value):,}"
@@ -243,6 +257,8 @@ def _format_count(value) -> str:
         return t("not_available")
 
 
+# 函数说明：构建 _build_revenue_column 所需的数据结构或界面内容。
+# 代码来源：AI生成 + 学生修改
 def _build_revenue_column(df: pd.DataFrame, revenue_col, qty_col, price_col):
     if revenue_col:
         work = df.copy()
@@ -257,11 +273,15 @@ def _build_revenue_column(df: pd.DataFrame, revenue_col, qty_col, price_col):
     return df, None
 
 
+# 函数说明：处理 _strip_icon_prefix 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _strip_icon_prefix(text: str) -> str:
     cleaned = "".join(ch for ch in str(text) if ord(ch) < 0x1F300 and ord(ch) not in (0xFE0F, 0x200D))
     return cleaned.strip()
 
 
+# 函数说明：处理 _dataset_kpis 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _dataset_kpis():
     cur = data_manager.get_current_dataset()
     if not cur or cur.get("df") is None or cur.get("df").empty:
@@ -309,6 +329,8 @@ def _dataset_kpis():
     }
 
 
+# 函数说明：处理 _kpi_card 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _kpi_card(label: str, value: str):
     st.markdown(
         f"""
@@ -321,6 +343,8 @@ def _kpi_card(label: str, value: str):
     )
 
 
+# 函数说明：处理 _module_card 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _module_card(code: str, title: str, desc: str):
     st.markdown(
         f"""
@@ -334,6 +358,8 @@ def _module_card(code: str, title: str, desc: str):
     )
 
 
+# 函数说明：处理 _set_current_page 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _set_current_page(page_key: str):
     if page_key not in PAGE_KEYS:
         page_key = "home"
@@ -341,12 +367,16 @@ def _set_current_page(page_key: str):
     st.session_state.page_index = PAGE_KEYS.index(page_key)
 
 
+# 函数说明：处理 _nav_button 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _nav_button(label: str, page_key: str, key: str):
     if st.button(label, key=key, use_container_width=True, icon=":material/open_in_new:"):
         _set_current_page(page_key)
         st.rerun()
 
 
+# 函数说明：处理 _safe_rerun 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _safe_rerun():
     rerun = getattr(st, "rerun", None)
     if rerun is None:
@@ -355,11 +385,15 @@ def _safe_rerun():
         rerun()
 
 
+# 函数说明：处理 _go_to_dataset_center 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _go_to_dataset_center():
     _set_current_page("dataset_center")
     _safe_rerun()
 
 
+# 函数说明：渲染 _render_missing_dataset_prompt 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def _render_missing_dataset_prompt():
     with st.container():
         prompt_col, button_col = st.columns([3, 1])
@@ -370,16 +404,22 @@ def _render_missing_dataset_prompt():
                 _go_to_dataset_center()
 
 
+# 函数说明：处理 _pill_list 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _pill_list(items):
     html = "".join(f'<span class="home-pill">{escape(item)}</span>' for item in items)
     st.markdown(html, unsafe_allow_html=True)
 
 
+# 函数说明：处理 _short_text 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _short_text(value, limit: int = 46) -> str:
     text = str(value)
     return text if len(text) <= limit else f"{text[:limit - 3]}..."
 
 
+# 函数说明：处理 _business_overview_items 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _business_overview_items(kpis):
     df = kpis.get("df")
     if df is None or df.empty:
@@ -440,6 +480,8 @@ def _business_overview_items(kpis):
     ]
 
 
+# 函数说明：处理 _summary_card 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _summary_card(label: str, value: str):
     st.markdown(
         f"""
@@ -452,6 +494,8 @@ def _summary_card(label: str, value: str):
     )
 
 
+# 函数说明：渲染 _render_sales_trend 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def _render_sales_trend(kpis):
     df = kpis.get("df")
     date_col = kpis.get("date_col")
@@ -497,6 +541,8 @@ def _render_sales_trend(kpis):
         st.info(_txt("no_chart_data"))
 
 
+# 函数说明：渲染 _render_top_products 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def _render_top_products(kpis):
     df = kpis.get("df")
     product_col = kpis.get("product_col")
@@ -545,6 +591,8 @@ def _render_top_products(kpis):
         st.info(_txt("no_chart_data"))
 
 
+# 函数说明：渲染 _render_customer_distribution 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def _render_customer_distribution(kpis):
     df = kpis.get("df")
     customer_col = kpis.get("customer_col")
@@ -594,6 +642,8 @@ def _render_customer_distribution(kpis):
         st.info(_txt("no_chart_data"))
 
 
+# 函数说明：渲染 _render_country_sales_map 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def _render_country_sales_map(kpis):
     df = kpis.get("df")
     country_col = kpis.get("country_col")
@@ -641,6 +691,8 @@ def _render_country_sales_map(kpis):
         st.info(_txt("no_chart_data"))
 
 
+# 函数说明：渲染当前页面或组件。
+# 代码来源：AI生成 + 学生修改
 def render():
     st.markdown(HOME_CSS, unsafe_allow_html=True)
 
@@ -653,8 +705,11 @@ def render():
         """,
         unsafe_allow_html=True,
     )
+    st.caption(_txt("guide"))
 
-    kpis = _dataset_kpis()
+    # Refresh high-level KPIs with a visible loading state on larger datasets.
+    with st.spinner(_txt("computing")):
+        kpis = _dataset_kpis()
     if not kpis["loaded"]:
         _render_missing_dataset_prompt()
 

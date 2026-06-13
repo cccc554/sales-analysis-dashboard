@@ -1,4 +1,6 @@
 """Advanced chart helpers with shared dashboard theming."""
+# 代码来源：AI生成
+# 模块说明：可视化模块，负责图表样式与构建。
 
 from config.theme import CHART_COLORS, PRIMARY, SECONDARY_BACKGROUND, apply_plotly_theme
 
@@ -6,6 +8,8 @@ from config.theme import CHART_COLORS, PRIMARY, SECONDARY_BACKGROUND, apply_plot
 CUSTOMER_HEATMAP_SCALE = [[0, SECONDARY_BACKGROUND], [1, PRIMARY]]
 
 
+# 函数说明：处理 apply_theme 相关逻辑。
+# 代码来源：AI生成
 def apply_theme(chart, height=None):
     """Apply the global theme to a Plotly figure-like object."""
     if hasattr(chart, "update_layout"):
@@ -13,6 +17,8 @@ def apply_theme(chart, height=None):
     return chart
 
 
+# 函数说明：处理 style_customer_segment_chart 相关逻辑。
+# 代码来源：AI生成
 def style_customer_segment_chart(fig):
     """Style customer segmentation bar or pie charts with the global color sequence."""
     if fig is None:
@@ -25,11 +31,15 @@ def style_customer_segment_chart(fig):
     return apply_plotly_theme(fig)
 
 
+# 函数说明：处理 style_customer_value_chart 相关逻辑。
+# 代码来源：AI生成
 def style_customer_value_chart(fig):
     """Style customer value distribution charts with the global color sequence."""
     return style_customer_segment_chart(fig)
 
 
+# 函数说明：处理 style_customer_behavior_heatmap 相关逻辑。
+# 代码来源：AI生成
 def style_customer_behavior_heatmap(fig):
     """Style customer behavior heatmaps with the required light-gray to primary scale."""
     if fig is None:
@@ -39,6 +49,8 @@ def style_customer_behavior_heatmap(fig):
     return apply_plotly_theme(fig)
 
 
+# 函数说明：构建 build_advanced_chart 所需的数据结构或界面内容。
+# 代码来源：AI生成
 def build_advanced_chart(config):
     """Return the advanced chart payload with theme applied when possible."""
     if isinstance(config, dict):

@@ -1,4 +1,6 @@
-﻿"""Central visual theme for the retail BI dashboard."""
+"""Central visual theme for the retail BI dashboard."""
+# 代码来源：AI生成 + 学生修改
+# 模块说明：配置模块，负责项目配置与主题样式。
 
 PRIMARY = "#2E86AB"
 ACCENT = "#A23B72"
@@ -18,6 +20,8 @@ PRIMARY_FILL = "rgba(46,134,171,0.18)"
 SHADOW = "0 10px 28px rgba(30, 41, 59, 0.08)"
 
 
+# 函数说明：处理 get_theme 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def get_theme():
     """Return the dashboard theme as a plain dictionary."""
     return {
@@ -41,6 +45,8 @@ def get_theme():
     }
 
 
+# 函数说明：处理 get_global_css 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def get_global_css() -> str:
     """Return global Streamlit CSS for the professional business theme."""
     return f"""
@@ -303,6 +309,8 @@ div.stButton > button[kind="secondary"]:hover {{
 """
 
 
+# 函数说明：处理 apply_plotly_theme 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def apply_plotly_theme(fig, height: int | None = None):
     """Apply the shared BI theme to a Plotly figure and return it."""
     if fig is None:

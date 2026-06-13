@@ -1,4 +1,6 @@
-﻿"""Sales analysis page with enterprise BI dashboard styling."""
+"""Sales analysis page with enterprise BI dashboard styling."""
+# 代码来源：AI生成 + 学生修改
+# 模块说明：页面模块，负责对应 Streamlit 页面渲染与交互。
 
 from html import escape
 from typing import Optional
@@ -98,7 +100,33 @@ SALES_CSS = """
 </style>
 """
 
+UI_TEXT = {
+    "en": {
+        "guide": "Scan the KPI cards first, then compare monthly trends, country contribution, and top products.",
+        "computing": "Calculating sales dashboard metrics...",
+    },
+    "zh": {
+        "guide": "建议先查看核心指标，再对比月度趋势、国家贡献和 Top 商品。",
+        "computing": "正在计算销售看板指标...",
+    },
+}
 
+
+# 函数说明：处理 _lang 相关逻辑。
+# 代码来源：AI生成 + 学生修改
+def _lang() -> str:
+    language = str(st.session_state.get("language", "en")).lower()
+    return "zh" if language.startswith("zh") else "en"
+
+
+# 函数说明：处理 _ui_text 相关逻辑。
+# 代码来源：AI生成 + 学生修改
+def _ui_text(key: str) -> str:
+    return UI_TEXT.get(_lang(), UI_TEXT["en"]).get(key, key)
+
+
+# 函数说明：查找 _find_column 相关字段或资源。
+# 代码来源：AI生成 + 学生修改
 def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     cols = list(df.columns)
     lower_map = {c.lower(): c for c in cols}
@@ -114,6 +142,8 @@ def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     return None
 
 
+# 函数说明：格式化 _format_metric 相关展示数据。
+# 代码来源：AI生成 + 学生修改
 def _format_metric(value, decimals: int = 2) -> str:
     if value is None:
         return t("not_available")
@@ -126,6 +156,8 @@ def _format_metric(value, decimals: int = 2) -> str:
     return f"{number:,.{decimals}f}"
 
 
+# 函数说明：渲染 _render_kpi 对应的界面内容。
+# 代码来源：AI生成 + 学生修改
 def _render_kpi(label: str, value: str, accent: str) -> None:
     st.markdown(
         f"""
@@ -139,6 +171,8 @@ def _render_kpi(label: str, value: str, accent: str) -> None:
     )
 
 
+# 函数说明：处理 _style_figure 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def _style_figure(fig, height: int = 380, hovermode: str = "closest"):
     fig.update_layout(
         template="plotly_white",
@@ -177,6 +211,8 @@ def _style_figure(fig, height: int = 380, hovermode: str = "closest"):
     return fig
 
 
+# 函数说明：构建 _build_revenue_column 所需的数据结构或界面内容。
+# 代码来源：AI生成 + 学生修改
 def _build_revenue_column(df: pd.DataFrame, revenue_col, price_col, qty_col):
     if revenue_col:
         return df, revenue_col
@@ -192,6 +228,8 @@ def _build_revenue_column(df: pd.DataFrame, revenue_col, price_col, qty_col):
     return df, None
 
 
+# 函数说明：渲染当前页面或组件。
+# 代码来源：AI生成 + 学生修改
 def render():
     st.markdown(SALES_CSS, unsafe_allow_html=True)
     st.markdown(
@@ -204,6 +242,7 @@ def render():
         """,
         unsafe_allow_html=True,
     )
+    st.caption(_ui_text("guide"))
 
     cur = data_manager.get_current_dataset()
     if not cur:
@@ -215,37 +254,41 @@ def render():
         st.info(t("no_dataset_loaded"))
         return
 
-    price_col = _find_column(df, ["unitprice", "unit price", "price", "unit_price"])
-    qty_col = _find_column(df, ["quantity", "qty", "amount", "units"])
-    revenue_col = _find_column(df, ["revenue", "total", "sales", "amount", "line_total", "amountpaid", "sales_amount"])
-    order_col = _find_column(df, ["invoiceno", "invoice", "orderid", "order_id", "order no", "order"])
-    customer_col = _find_column(df, ["customerid", "customer id", "customer", "custid"])
-    date_col = _find_column(df, ["invoicedate", "invoice date", "date", "orderdate", "order_date", "timestamp"])
-    product_col = _find_column(df, ["description", "product", "productname", "stockcode", "item"])
-    country_col = _find_column(df, ["country", "country_name", "region"])
+    # Field detection and KPI preparation can take a moment on large files.
+    with st.spinner(_ui_text("computing")):
+        price_col = _find_column(df, ["unitprice", "unit price", "price", "unit_price"])
+        qty_col = _find_column(df, ["quantity", "qty", "amount", "units"])
+        revenue_col = _find_column(df, ["revenue", "total", "sales", "amount", "line_total", "amountpaid", "sales_amount"])
+        order_col = _find_column(df, ["invoiceno", "invoice", "orderid", "order_id", "order no", "order"])
+        customer_col = _find_column(df, ["customerid", "customer id", "customer", "custid"])
+        date_col = _find_column(df, ["invoicedate", "invoice date", "date", "orderdate", "order_date", "timestamp"])
+        product_col = _find_column(df, ["description", "product", "productname", "stockcode", "item"])
+        country_col = _find_column(df, ["country", "country_name", "region"])
 
-    df, rev_col = _build_revenue_column(df, revenue_col, price_col, qty_col)
+        df, rev_col = _build_revenue_column(df, revenue_col, price_col, qty_col)
 
-    def safe_sum(col):
-        try:
-            return float(pd.to_numeric(df[col], errors="coerce").sum())
-        except Exception:
-            return None
+        # 函数说明：处理 safe_sum 相关逻辑。
+        # 代码来源：AI生成 + 学生修改
+        def safe_sum(col):
+            try:
+                return float(pd.to_numeric(df[col], errors="coerce").sum())
+            except Exception:
+                return None
 
-    revenue_total = safe_sum(rev_col) if rev_col else None
-    orders_count = None
-    if order_col:
-        try:
-            orders_count = int(df[order_col].nunique())
-        except Exception:
-            orders_count = None
-    customers_count = None
-    if customer_col:
-        try:
-            customers_count = int(df[customer_col].nunique())
-        except Exception:
-            customers_count = None
-    aov = revenue_total / orders_count if revenue_total is not None and orders_count else None
+        revenue_total = safe_sum(rev_col) if rev_col else None
+        orders_count = None
+        if order_col:
+            try:
+                orders_count = int(df[order_col].nunique())
+            except Exception:
+                orders_count = None
+        customers_count = None
+        if customer_col:
+            try:
+                customers_count = int(df[customer_col].nunique())
+            except Exception:
+                customers_count = None
+        aov = revenue_total / orders_count if revenue_total is not None and orders_count else None
 
     k1, k2, k3, k4 = st.columns(4)
     with k1:

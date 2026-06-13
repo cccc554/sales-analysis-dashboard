@@ -1,4 +1,6 @@
 """LLM service adapters."""
+# 代码来源：AI生成 + 学生修改
+# 模块说明：服务模块，负责数据、模型或通用业务能力封装。
 
 import json
 import os
@@ -6,6 +8,8 @@ import urllib.error
 import urllib.request
 
 
+# 函数说明：处理 get_qianwen_api_key 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def get_qianwen_api_key() -> str:
     api_key = os.environ.get("QIANWEN_API_KEY", "").strip()
     if api_key:
@@ -27,6 +31,8 @@ def get_qianwen_api_key() -> str:
     return ""
 
 
+# 类说明：封装 QwenService 相关状态与行为。
+# 代码来源：AI生成 + 学生修改
 class QwenService:
     def __init__(self, api_key: str, model: str = "qwen-plus", temperature: float = 0.2):
         self.api_key = api_key
@@ -34,6 +40,8 @@ class QwenService:
         self.temperature = temperature
         self.endpoint = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
 
+    # 函数说明：生成 generate 对应的文本或结果。
+    # 代码来源：AI生成 + 学生修改
     def generate(self, prompt: str) -> str:
         payload = {
             "model": self.model,

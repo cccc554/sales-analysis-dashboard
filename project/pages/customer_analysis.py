@@ -1,4 +1,4 @@
-﻿"""Customer Analysis 页面 — 客户仪表盘。
+"""Customer Analysis 页面 — 客户仪表盘。
 
 布局：
 1) 客户核心指标（总客户数、活跃客户数、人均消费、人均订单数）
@@ -8,6 +8,8 @@
 
 优先使用当前已加载数据集，缺少字段时优雅降级。所有可见文本通过 `t(...)` 国际化。
 """
+# 代码来源：AI生成 + 学生修改
+# 模块说明：页面模块，负责对应 Streamlit 页面渲染与交互。
 
 import streamlit as st
 import pandas as pd
@@ -23,6 +25,33 @@ from services.ai_insights import render_ai_insights
 from config.theme import ACCENT, CARD, CHART_COLORS, PRIMARY, SECONDARY_BACKGROUND, SUCCESS, TEXT, WARNING, apply_plotly_theme
 
 
+UI_TEXT = {
+    "en": {
+        "guide": "Start with customer KPIs, then review segments, contribution concentration, and behavior patterns.",
+        "computing": "Calculating customer metrics...",
+    },
+    "zh": {
+        "guide": "建议先查看客户核心指标，再分析客户分层、贡献集中度和行为分布。",
+        "computing": "正在计算客户指标...",
+    },
+}
+
+
+# 函数说明：处理 _lang 相关逻辑。
+# 代码来源：AI生成 + 学生修改
+def _lang() -> str:
+    language = str(st.session_state.get("language", "en")).lower()
+    return "zh" if language.startswith("zh") else "en"
+
+
+# 函数说明：处理 _ui_text 相关逻辑。
+# 代码来源：AI生成 + 学生修改
+def _ui_text(key: str) -> str:
+    return UI_TEXT.get(_lang(), UI_TEXT["en"]).get(key, key)
+
+
+# 函数说明：查找 _find_column 相关字段或资源。
+# 代码来源：AI生成 + 学生修改
 def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     cols = list(df.columns)
     lower_map = {c.lower(): c for c in cols}
@@ -37,9 +66,12 @@ def _find_column(df: pd.DataFrame, candidates) -> Optional[str]:
     return None
 
 
+# 函数说明：渲染当前页面或组件。
+# 代码来源：AI生成 + 学生修改
 def render():
     st.title(t("customer_analysis"))
     st.write(t("customer_analysis_summary"))
+    st.caption(_ui_text("guide"))
 
     cur = data_manager.get_current_dataset()
     if not cur:
@@ -51,63 +83,62 @@ def render():
         st.info(t("no_dataset_loaded"))
         return
 
-    # detect columns
-    customer_col = _find_column(df, ["customerid", "customer id", "customer", "custid"])
-    order_col = _find_column(df, ["invoiceno", "invoice", "orderid", "order_id", "order no", "order"])
-    qty_col = _find_column(df, ["quantity", "qty", "amount", "units"])
-    price_col = _find_column(df, ["unitprice", "unit price", "price", "unit_price"])
-    date_col = _find_column(df, ["invoicedate", "invoice date", "date", "orderdate", "order_date", "timestamp"])
-    revenue_col = _find_column(df, ["revenue", "total", "sales", "amount", "line_total", "amountpaid"]) 
+    # Detect fields and prepare KPI inputs before rendering the dashboard.
+    with st.spinner(_ui_text("computing")):
+        customer_col = _find_column(df, ["customerid", "customer id", "customer", "custid"])
+        order_col = _find_column(df, ["invoiceno", "invoice", "orderid", "order_id", "order no", "order"])
+        qty_col = _find_column(df, ["quantity", "qty", "amount", "units"])
+        price_col = _find_column(df, ["unitprice", "unit price", "price", "unit_price"])
+        date_col = _find_column(df, ["invoicedate", "invoice date", "date", "orderdate", "order_date", "timestamp"])
+        revenue_col = _find_column(df, ["revenue", "total", "sales", "amount", "line_total", "amountpaid"]) 
 
-    # compute revenue if needed
-    rev_col = None
-    if revenue_col:
-        rev_col = revenue_col
-    elif price_col and qty_col:
-        try:
-            df = df.copy()
-            df["_revenue_calc"] = pd.to_numeric(df[price_col], errors="coerce").fillna(0) * pd.to_numeric(df[qty_col], errors="coerce").fillna(0)
-            rev_col = "_revenue_calc"
-        except Exception:
-            rev_col = None
+        rev_col = None
+        if revenue_col:
+            rev_col = revenue_col
+        elif price_col and qty_col:
+            try:
+                df = df.copy()
+                df["_revenue_calc"] = pd.to_numeric(df[price_col], errors="coerce").fillna(0) * pd.to_numeric(df[qty_col], errors="coerce").fillna(0)
+                rev_col = "_revenue_calc"
+            except Exception:
+                rev_col = None
 
-    # KPIs
-    total_customers = None
-    if customer_col:
-        try:
-            total_customers = int(df[customer_col].nunique())
-        except Exception:
-            total_customers = None
+        total_customers = None
+        if customer_col:
+            try:
+                total_customers = int(df[customer_col].nunique())
+            except Exception:
+                total_customers = None
 
-    active_customers = None
-    if customer_col and date_col:
-        try:
-            df[date_col] = pd.to_datetime(df[date_col], errors="coerce")
-            max_date = df[date_col].max()
-            thresh = max_date - pd.Timedelta(days=365)
-            recent = df[df[date_col] >= thresh]
-            active_customers = int(recent[customer_col].nunique())
-        except Exception:
-            active_customers = None
+        active_customers = None
+        if customer_col and date_col:
+            try:
+                df[date_col] = pd.to_datetime(df[date_col], errors="coerce")
+                max_date = df[date_col].max()
+                thresh = max_date - pd.Timedelta(days=365)
+                recent = df[df[date_col] >= thresh]
+                active_customers = int(recent[customer_col].nunique())
+            except Exception:
+                active_customers = None
 
-    avg_spend = None
-    if customer_col and rev_col:
-        try:
-            cust_rev = df.groupby(customer_col)[rev_col].sum()
-            avg_spend = float(cust_rev.mean())
-        except Exception:
-            avg_spend = None
+        avg_spend = None
+        if customer_col and rev_col:
+            try:
+                cust_rev = df.groupby(customer_col)[rev_col].sum()
+                avg_spend = float(cust_rev.mean())
+            except Exception:
+                avg_spend = None
 
-    avg_orders = None
-    if customer_col:
-        try:
-            if order_col:
-                cust_orders = df.groupby(customer_col)[order_col].nunique()
-            else:
-                cust_orders = df.groupby(customer_col).size()
-            avg_orders = float(cust_orders.mean())
-        except Exception:
-            avg_orders = None
+        avg_orders = None
+        if customer_col:
+            try:
+                if order_col:
+                    cust_orders = df.groupby(customer_col)[order_col].nunique()
+                else:
+                    cust_orders = df.groupby(customer_col).size()
+                avg_orders = float(cust_orders.mean())
+            except Exception:
+                avg_orders = None
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric(t("kpi_total_customers"), f"{total_customers:,}" if total_customers is not None else t("not_available"))
@@ -201,6 +232,8 @@ def render():
                 f75 = rfm["frequency"].quantile(0.75)
                 m75 = rfm["monetary"].quantile(0.75)
 
+                # 函数说明：处理 seg 相关逻辑。
+                # 代码来源：AI生成 + 学生修改
                 def seg(row):
                     try:
                         if row["monetary"] >= m75 and row["frequency"] >= f75:

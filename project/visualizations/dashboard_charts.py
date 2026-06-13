@@ -1,8 +1,12 @@
 """Dashboard chart collection helpers with shared theming."""
+# 代码来源：AI生成
+# 模块说明：可视化模块，负责图表样式与构建。
 
 from config.theme import ACCENT, PRIMARY, apply_plotly_theme
 
 
+# 函数说明：处理 style_comparison_chart 相关逻辑。
+# 代码来源：AI生成
 def style_comparison_chart(fig):
     """Use primary as the default color for comparison charts."""
     if fig is None:
@@ -15,6 +19,8 @@ def style_comparison_chart(fig):
     return apply_plotly_theme(fig)
 
 
+# 函数说明：处理 style_dual_axis_chart 相关逻辑。
+# 代码来源：AI生成
 def style_dual_axis_chart(fig):
     """Use primary for the first series and accent for the second series."""
     if fig is None:
@@ -29,6 +35,8 @@ def style_dual_axis_chart(fig):
     return apply_plotly_theme(fig)
 
 
+# 函数说明：处理 _theme_item 相关逻辑。
+# 代码来源：AI生成
 def _theme_item(item):
     if hasattr(item, "update_layout"):
         return apply_plotly_theme(item)
@@ -51,6 +59,8 @@ def _theme_item(item):
     return item
 
 
+# 函数说明：构建 build_dashboard 所需的数据结构或界面内容。
+# 代码来源：AI生成
 def build_dashboard(charts):
     """Return a dashboard payload with theme applied to Plotly figures."""
     return {"dashboard": _theme_item(charts)}

@@ -1,12 +1,16 @@
 """数据管理层。
 提供保存/读取当前数据集、计算元信息与列类型检测的工具。
 """
+# 代码来源：AI生成 + 学生修改
+# 模块说明：服务模块，负责数据、模型或通用业务能力封装。
 
 import streamlit as st
 import pandas as pd
 from typing import Dict, Any
 
 
+# 函数说明：处理 detect_columns 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def detect_columns(df: pd.DataFrame) -> Dict[str, Any]:
     """检测列类型并统计数值/类别/日期列。"""
     numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
@@ -34,6 +38,8 @@ def detect_columns(df: pd.DataFrame) -> Dict[str, Any]:
     }
 
 
+# 函数说明：计算 _compute_quality_score 对应的业务指标。
+# 代码来源：AI生成 + 学生修改
 def _compute_quality_score(meta: Dict[str, Any]) -> int:
     """根据缺失率、重复率等生成 0-100 的质量评分，启发式。"""
     rows = meta.get("rows", 0)
@@ -55,6 +61,8 @@ def _compute_quality_score(meta: Dict[str, Any]) -> int:
     return score
 
 
+# 函数说明：处理 save_dataset 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def save_dataset(name: str, df: pd.DataFrame, source: Dict[str, Any]) -> None:
     """保存数据集到会话并生成 meta 信息。"""
     rows = len(df)
@@ -91,10 +99,14 @@ def save_dataset(name: str, df: pd.DataFrame, source: Dict[str, Any]) -> None:
     st.session_state["current_dataset"] = {"name": name, "df": df, "meta": meta}
 
 
+# 函数说明：处理 get_current_dataset 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def get_current_dataset():
     return st.session_state.get("current_dataset")
 
 
+# 函数说明：处理 get_dataset_meta 相关逻辑。
+# 代码来源：AI生成 + 学生修改
 def get_dataset_meta():
     cur = get_current_dataset()
     return cur.get("meta") if cur else None
